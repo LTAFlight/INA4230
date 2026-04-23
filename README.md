@@ -15,7 +15,7 @@ async sensor traits (`VoltageSensor`, `CurrentSensor`, `PowerSensor`, `EnergySen
 - ADC range selection (±81.92 mV or ±20.48 mV full scale) written to hardware on calibration
 - Channel enable/disable support
 - INA4230-specific error variants (`NotCalibrated`, `MathOverflow`, `EnergyOverflow`)
-- Optional `defmt-03` logging support
+- Optional `defmt` logging support
 - `no_std` compatible
 
 ## Usage
@@ -27,11 +27,11 @@ embedded-hal-async = "1"
 ```
 
 ```rust,no_run
-use ina4230::{A0, A1, AdcRange, Channel, Ina4230};
+use ina4230::{AddrPinState, AdcRange, Channel, Ina4230};
 
 // i2c implements embedded_hal_async::i2c::I2c
-// A0 and A1 select the I²C address via pin strapping on the device
-let mut sensor = Ina4230::new(i2c, A0::Gnd, A1::Gnd);
+// AddrPinState selects the I²C address via A0 and A1 pin strapping on the device
+let mut sensor = Ina4230::new(i2c, AddrPinState::Gnd, AddrPinState::Gnd);
 
 // Reset, then calibrate each channel before taking measurements
 sensor.reset().await?;
@@ -184,21 +184,37 @@ if let Err(e) = sensor.check_flags().await {
 ## I²C Addresses
 
 The I²C address is selected by the A0 and A1 pin strapping on the device.
-Pass `A0` and `A1` values to `Ina4230::new()`:
+Pass two `AddrPinState` values to `Ina4230::new()` — the first for A0, the
+second for A1:
 
 ```rust,no_run
-let sensor = Ina4230::new(i2c, A0::Gnd, A1::Gnd);  // address 0x40
-let sensor = Ina4230::new(i2c, A0::Vs,  A1::Gnd);  // address 0x41
-let sensor = Ina4230::new(i2c, A0::Gnd, A1::Vs);   // address 0x44
-let sensor = Ina4230::new(i2c, A0::Vs,  A1::Vs);   // address 0x45
+// A0=GND, A1=GND → address 0x40
+let sensor = Ina4230::new(i2c, AddrPinState::Gnd, AddrPinState::Gnd);
+
+// A0=VS, A1=SDA → address 0x46
+let sensor = Ina4230::new(i2c, AddrPinState::Vs, AddrPinState::Sda);
 ```
 
-| A1  | A0  | Address |
+All 16 address combinations (per datasheet Table 6-1):
+
+| A0  | A1  | Address |
 |-----|-----|---------|
 | GND | GND | `0x40`  |
-| GND | VS  | `0x41`  |
-| VS  | GND | `0x44`  |
+| VS  | GND | `0x41`  |
+| GND | SDA | `0x42`  |
+| GND | SCL | `0x43`  |
+| GND | VS  | `0x44`  |
 | VS  | VS  | `0x45`  |
+| VS  | SDA | `0x46`  |
+| VS  | SCL | `0x47`  |
+| SDA | GND | `0x48`  |
+| SDA | VS  | `0x49`  |
+| SDA | SDA | `0x4A`  |
+| SDA | SCL | `0x4B`  |
+| SCL | GND | `0x4C`  |
+| SCL | VS  | `0x4D`  |
+| SCL | SDA | `0x4E`  |
+| SCL | SCL | `0x4F`  |
 
 ## Regenerating `src/device.rs`
 
