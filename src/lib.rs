@@ -159,6 +159,17 @@ pub enum Channel {
     Ch4 = 3,
 }
 
+impl Channel {
+    fn to_bit(self) -> u8 {
+        match self {
+            Channel::Ch0 => 0b0001,
+            Channel::Ch1 => 0b0010,
+            Channel::Ch2 => 0b0100,
+            Channel::Ch3 => 0b1000,
+        }
+    }
+}
+
 // ── ADC Range ─────────────────────────────────────────────────────────────────
 
 /// ADC full-scale input range for shunt voltage measurement.
