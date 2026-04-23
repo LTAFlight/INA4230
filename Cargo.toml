@@ -1,19 +1,43 @@
 [package]
-name = "embedded-rust-template"
+name = "ina4230"
 version = "0.1.0"
-edition = "2021"
+repository = "https://github.com/OpenDevicePartnership/ina4230"
 license = "MIT"
-repository = "https://github.com/OpenDevicePartnership/embedded-rust-template"
-rust-version = "1.85"
+description = "Platform-agnostic Rust driver for the Texas Instruments INA4230 quad-channel power and energy sense monitor."
+readme = "README.md"
+keywords = ["TI", "power-monitor", "energy", "driver", "embedded-hal-driver"]
+categories = ["embedded", "hardware-support", "no-std"]
+documentation = "https://docs.rs/ina4230"
+include = ["/**/*.rs", "/Cargo.toml", "/README.md", "/LICENSE", "/ina4230.toml"]
+edition = "2024"
 
 [dependencies]
-# dependencies for all targets
+device-driver = { version = "1.0.7", default-features = false }
+defmt = { version = "0.3", optional = true }
+embedded-hal-async = "1.0.0"
+embedded-sensors-hal-async = "0.4.0"
 
-[target.'cfg(target_os = "none")'.dependencies]
-# dependencies for no-std targets
+[dev-dependencies]
+embedded-hal-mock = { version = "0.11.1", features = ["embedded-hal-async"] }
+tokio = { version = "1", features = ["rt", "macros"] }
+
+[lib]
+doctest = false
+
+[lints.rust]
+unsafe_code = "deny"
+missing_docs = "deny"
 
 [lints.clippy]
-suspicious = "forbid"
 correctness = "forbid"
+suspicious = "forbid"
 perf = "forbid"
 style = "forbid"
+pedantic = "deny"
+
+[features]
+defmt-03 = [
+    "dep:defmt",
+    "device-driver/defmt-03",
+    "embedded-sensors-hal-async/defmt",
+]

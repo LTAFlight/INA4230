@@ -1,0 +1,34 @@
+# Verifies that src/device.rs stays in sync with the code generated from ina4230.toml.
+permissions:
+  contents: read
+on:
+  push:
+    branches: [main]
+  pull_request:
+concurrency:
+  group: ${{ github.workflow }}-${{ github.head_ref || github.run_id }}
+  cancel-in-progress: true
+name: device-driver-pregen-check
+jobs:
+  device-driver-pregen-check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install stable
+        uses: dtolnay/rust-toolchain@stable
+        with: { components: rustfmt }
+      - name: Install device-driver-cli
+        uses: baptiste0928/cargo-install@v3
+        with:
+          crate: device-driver-cli
+      - name: Generate device.rs from ina4230.toml
+        run: device-driver-cli --manifest ina4230.toml --device-name Device -o ci_gen.rs
+      - name: Format generated file
+        run: rustfmt --edition 2024 ci_gen.rs
+      - name: Check generated file matches committed src/device.rs
+        uses: LouisBrunner/diff-action@v3.0.0
+        with:
+          old: ci_gen.rs
+          new: src/device.rs
+          mode: strict
+          tolerance: same
