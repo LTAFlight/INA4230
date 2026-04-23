@@ -99,35 +99,46 @@ impl<I2c: embedded_hal_async::i2c::I2c> device_driver::AsyncRegisterInterface fo
 
 // ── Address pins ──────────────────────────────────────────────────────────────
 
-/// A0 pin logic level for I²C address selection.
 #[derive(Debug, Default, Clone, Copy, PartialEq, Eq)]
-#[cfg_attr(feature = "defmt-03", derive(defmt::Format))]
-pub enum A0 {
-    /// A0 tied to GND (default).
+#[cfg_attr(feature = "defmt", derive(defmt::Format))]
+pub enum AddrPinState {
+    /// Address pin tied to GND (default).
     #[default]
     Gnd,
-    /// A0 tied to VS.
+    /// Address pin tied to VS.
     Vs,
+    /// Address pin tied to SDA.
+    Sda,
+    /// Address pin tied to SCL.
+    Scl,
 }
 
-/// A1 pin logic level for I²C address selection.
-#[derive(Debug, Default, Clone, Copy, PartialEq, Eq)]
-#[cfg_attr(feature = "defmt-03", derive(defmt::Format))]
-pub enum A1 {
-    /// A1 tied to GND (default).
-    #[default]
-    Gnd,
-    /// A1 tied to VS.
-    Vs,
+/// Trait for converting an (A0, A1) pair of address pin states into
+/// the corresponding I2C address.
+trait ToAddress {
+    fn to_address(self) -> u8;
 }
 
-/// Compute the 7-bit I²C address from A0 and A1 pin strapping.
-pub fn i2c_address(a0: A0, a1: A1) -> u8 {
-    match (a0, a1) {
-        (A0::Gnd, A1::Gnd) => 0x40,
-        (A0::Vs, A1::Gnd) => 0x41,
-        (A0::Gnd, A1::Vs) => 0x44,
-        (A0::Vs, A1::Vs) => 0x45,
+impl ToAddress for (AddrPinState, AddrPinState) {
+    fn to_address(self) -> u8 {
+        match self {
+            (AddrPinState::Gnd, AddrPinState::Gnd) => 0b100_0000,
+            (AddrPinState::Gnd, AddrPinState::Vs) => 0b100_0001,
+            (AddrPinState::Gnd, AddrPinState::Sda) => 0b100_0010,
+            (AddrPinState::Gnd, AddrPinState::Scl) => 0b100_0011,
+            (AddrPinState::Vs, AddrPinState::Gnd) => 0b100_0100,
+            (AddrPinState::Vs, AddrPinState::Vs) => 0b100_0101,
+            (AddrPinState::Vs, AddrPinState::Sda) => 0b100_0110,
+            (AddrPinState::Vs, AddrPinState::Scl) => 0b100_0111,
+            (AddrPinState::Sda, AddrPinState::Gnd) => 0b100_1000,
+            (AddrPinState::Sda, AddrPinState::Vs) => 0b100_1001,
+            (AddrPinState::Sda, AddrPinState::Sda) => 0b100_1010,
+            (AddrPinState::Sda, AddrPinState::Scl) => 0b100_1011,
+            (AddrPinState::Scl, AddrPinState::Gnd) => 0b100_1100,
+            (AddrPinState::Scl, AddrPinState::Vs) => 0b100_1101,
+            (AddrPinState::Scl, AddrPinState::Sda) => 0b100_1110,
+            (AddrPinState::Scl, AddrPinState::Scl) => 0b100_1111,
+        }
     }
 }
 
