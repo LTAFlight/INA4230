@@ -2,7 +2,7 @@
 register_address_type = "u8"
 default_byte_order = "BE"
 name_word_boundaries = ["Hyphen"]
-defmt_feature = "defmt-03"
+defmt_feature = "defmt"
 # ============================================================
 # CONFIG1 Register (Address = 0x20, Reset = 0xF127)
 # ============================================================

@@ -212,49 +212,31 @@ impl<I> Device<I> {
     /// Configuration register 1
     pub fn config_1(
         &mut self,
-    ) -> ::device_driver::RegisterOperation<'_, I, u8, field_sets::Config1, ::device_driver::RW>
-    {
+    ) -> ::device_driver::RegisterOperation<'_, I, u8, field_sets::Config1, ::device_driver::RW> {
         let address = self.base_address + 32;
-        ::device_driver::RegisterOperation::<
-            '_,
-            I,
-            u8,
-            field_sets::Config1,
-            ::device_driver::RW,
-        >::new(self.interface(), address as u8, field_sets::Config1::new)
+        ::device_driver::RegisterOperation::<'_, I, u8, field_sets::Config1, ::device_driver::RW>::new(
+            self.interface(),
+            address as u8,
+            field_sets::Config1::new,
+        )
     }
     /// Configuration register 2
     pub fn config_2(
         &mut self,
-    ) -> ::device_driver::RegisterOperation<'_, I, u8, field_sets::Config2, ::device_driver::RW>
-    {
+    ) -> ::device_driver::RegisterOperation<'_, I, u8, field_sets::Config2, ::device_driver::RW> {
         let address = self.base_address + 33;
-        ::device_driver::RegisterOperation::<
-            '_,
-            I,
-            u8,
-            field_sets::Config2,
-            ::device_driver::RW,
-        >::new(self.interface(), address as u8, field_sets::Config2::new)
+        ::device_driver::RegisterOperation::<'_, I, u8, field_sets::Config2, ::device_driver::RW>::new(
+            self.interface(),
+            address as u8,
+            field_sets::Config2::new,
+        )
     }
     /// Calibration register channel 1
     pub fn calibration_ch_1(
         &mut self,
-    ) -> ::device_driver::RegisterOperation<
-        '_,
-        I,
-        u8,
-        field_sets::CalibrationCh1,
-        ::device_driver::RW,
-    > {
+    ) -> ::device_driver::RegisterOperation<'_, I, u8, field_sets::CalibrationCh1, ::device_driver::RW> {
         let address = self.base_address + 5;
-        ::device_driver::RegisterOperation::<
-            '_,
-            I,
-            u8,
-            field_sets::CalibrationCh1,
-            ::device_driver::RW,
-        >::new(
+        ::device_driver::RegisterOperation::<'_, I, u8, field_sets::CalibrationCh1, ::device_driver::RW>::new(
             self.interface(),
             address as u8,
             field_sets::CalibrationCh1::new,
@@ -263,21 +245,9 @@ impl<I> Device<I> {
     /// Calibration register channel 2
     pub fn calibration_ch_2(
         &mut self,
-    ) -> ::device_driver::RegisterOperation<
-        '_,
-        I,
-        u8,
-        field_sets::CalibrationCh2,
-        ::device_driver::RW,
-    > {
+    ) -> ::device_driver::RegisterOperation<'_, I, u8, field_sets::CalibrationCh2, ::device_driver::RW> {
         let address = self.base_address + 13;
-        ::device_driver::RegisterOperation::<
-            '_,
-            I,
-            u8,
-            field_sets::CalibrationCh2,
-            ::device_driver::RW,
-        >::new(
+        ::device_driver::RegisterOperation::<'_, I, u8, field_sets::CalibrationCh2, ::device_driver::RW>::new(
             self.interface(),
             address as u8,
             field_sets::CalibrationCh2::new,
@@ -286,21 +256,9 @@ impl<I> Device<I> {
     /// Calibration register channel 3
     pub fn calibration_ch_3(
         &mut self,
-    ) -> ::device_driver::RegisterOperation<
-        '_,
-        I,
-        u8,
-        field_sets::CalibrationCh3,
-        ::device_driver::RW,
-    > {
+    ) -> ::device_driver::RegisterOperation<'_, I, u8, field_sets::CalibrationCh3, ::device_driver::RW> {
         let address = self.base_address + 21;
-        ::device_driver::RegisterOperation::<
-            '_,
-            I,
-            u8,
-            field_sets::CalibrationCh3,
-            ::device_driver::RW,
-        >::new(
+        ::device_driver::RegisterOperation::<'_, I, u8, field_sets::CalibrationCh3, ::device_driver::RW>::new(
             self.interface(),
             address as u8,
             field_sets::CalibrationCh3::new,
@@ -309,21 +267,9 @@ impl<I> Device<I> {
     /// Calibration register channel 4
     pub fn calibration_ch_4(
         &mut self,
-    ) -> ::device_driver::RegisterOperation<
-        '_,
-        I,
-        u8,
-        field_sets::CalibrationCh4,
-        ::device_driver::RW,
-    > {
+    ) -> ::device_driver::RegisterOperation<'_, I, u8, field_sets::CalibrationCh4, ::device_driver::RW> {
         let address = self.base_address + 29;
-        ::device_driver::RegisterOperation::<
-            '_,
-            I,
-            u8,
-            field_sets::CalibrationCh4,
-            ::device_driver::RW,
-        >::new(
+        ::device_driver::RegisterOperation::<'_, I, u8, field_sets::CalibrationCh4, ::device_driver::RW>::new(
             self.interface(),
             address as u8,
             field_sets::CalibrationCh4::new,
@@ -332,133 +278,97 @@ impl<I> Device<I> {
     /// Alert configuration register 1
     pub fn alert_config_1(
         &mut self,
-    ) -> ::device_driver::RegisterOperation<'_, I, u8, field_sets::AlertConfig1, ::device_driver::RW>
-    {
+    ) -> ::device_driver::RegisterOperation<'_, I, u8, field_sets::AlertConfig1, ::device_driver::RW> {
         let address = self.base_address + 7;
-        ::device_driver::RegisterOperation::<
-            '_,
-            I,
-            u8,
-            field_sets::AlertConfig1,
-            ::device_driver::RW,
-        >::new(self.interface(), address as u8, field_sets::AlertConfig1::new)
+        ::device_driver::RegisterOperation::<'_, I, u8, field_sets::AlertConfig1, ::device_driver::RW>::new(
+            self.interface(),
+            address as u8,
+            field_sets::AlertConfig1::new,
+        )
     }
     /// Alert configuration register 2
     pub fn alert_config_2(
         &mut self,
-    ) -> ::device_driver::RegisterOperation<'_, I, u8, field_sets::AlertConfig2, ::device_driver::RW>
-    {
+    ) -> ::device_driver::RegisterOperation<'_, I, u8, field_sets::AlertConfig2, ::device_driver::RW> {
         let address = self.base_address + 15;
-        ::device_driver::RegisterOperation::<
-            '_,
-            I,
-            u8,
-            field_sets::AlertConfig2,
-            ::device_driver::RW,
-        >::new(self.interface(), address as u8, field_sets::AlertConfig2::new)
+        ::device_driver::RegisterOperation::<'_, I, u8, field_sets::AlertConfig2, ::device_driver::RW>::new(
+            self.interface(),
+            address as u8,
+            field_sets::AlertConfig2::new,
+        )
     }
     /// Alert configuration register 3
     pub fn alert_config_3(
         &mut self,
-    ) -> ::device_driver::RegisterOperation<'_, I, u8, field_sets::AlertConfig3, ::device_driver::RW>
-    {
+    ) -> ::device_driver::RegisterOperation<'_, I, u8, field_sets::AlertConfig3, ::device_driver::RW> {
         let address = self.base_address + 23;
-        ::device_driver::RegisterOperation::<
-            '_,
-            I,
-            u8,
-            field_sets::AlertConfig3,
-            ::device_driver::RW,
-        >::new(self.interface(), address as u8, field_sets::AlertConfig3::new)
+        ::device_driver::RegisterOperation::<'_, I, u8, field_sets::AlertConfig3, ::device_driver::RW>::new(
+            self.interface(),
+            address as u8,
+            field_sets::AlertConfig3::new,
+        )
     }
     /// Alert configuration register 4
     pub fn alert_config_4(
         &mut self,
-    ) -> ::device_driver::RegisterOperation<'_, I, u8, field_sets::AlertConfig4, ::device_driver::RW>
-    {
+    ) -> ::device_driver::RegisterOperation<'_, I, u8, field_sets::AlertConfig4, ::device_driver::RW> {
         let address = self.base_address + 31;
-        ::device_driver::RegisterOperation::<
-            '_,
-            I,
-            u8,
-            field_sets::AlertConfig4,
-            ::device_driver::RW,
-        >::new(self.interface(), address as u8, field_sets::AlertConfig4::new)
+        ::device_driver::RegisterOperation::<'_, I, u8, field_sets::AlertConfig4, ::device_driver::RW>::new(
+            self.interface(),
+            address as u8,
+            field_sets::AlertConfig4::new,
+        )
     }
     /// Alert limit register 1. Format matches corresponding result register.
     pub fn alert_limit_1(
         &mut self,
-    ) -> ::device_driver::RegisterOperation<'_, I, u8, field_sets::AlertLimit1, ::device_driver::RW>
-    {
+    ) -> ::device_driver::RegisterOperation<'_, I, u8, field_sets::AlertLimit1, ::device_driver::RW> {
         let address = self.base_address + 6;
-        ::device_driver::RegisterOperation::<
-            '_,
-            I,
-            u8,
-            field_sets::AlertLimit1,
-            ::device_driver::RW,
-        >::new(self.interface(), address as u8, field_sets::AlertLimit1::new)
+        ::device_driver::RegisterOperation::<'_, I, u8, field_sets::AlertLimit1, ::device_driver::RW>::new(
+            self.interface(),
+            address as u8,
+            field_sets::AlertLimit1::new,
+        )
     }
     /// Alert limit register 2
     pub fn alert_limit_2(
         &mut self,
-    ) -> ::device_driver::RegisterOperation<'_, I, u8, field_sets::AlertLimit2, ::device_driver::RW>
-    {
+    ) -> ::device_driver::RegisterOperation<'_, I, u8, field_sets::AlertLimit2, ::device_driver::RW> {
         let address = self.base_address + 14;
-        ::device_driver::RegisterOperation::<
-            '_,
-            I,
-            u8,
-            field_sets::AlertLimit2,
-            ::device_driver::RW,
-        >::new(self.interface(), address as u8, field_sets::AlertLimit2::new)
+        ::device_driver::RegisterOperation::<'_, I, u8, field_sets::AlertLimit2, ::device_driver::RW>::new(
+            self.interface(),
+            address as u8,
+            field_sets::AlertLimit2::new,
+        )
     }
     /// Alert limit register 3
     pub fn alert_limit_3(
         &mut self,
-    ) -> ::device_driver::RegisterOperation<'_, I, u8, field_sets::AlertLimit3, ::device_driver::RW>
-    {
+    ) -> ::device_driver::RegisterOperation<'_, I, u8, field_sets::AlertLimit3, ::device_driver::RW> {
         let address = self.base_address + 22;
-        ::device_driver::RegisterOperation::<
-            '_,
-            I,
-            u8,
-            field_sets::AlertLimit3,
-            ::device_driver::RW,
-        >::new(self.interface(), address as u8, field_sets::AlertLimit3::new)
+        ::device_driver::RegisterOperation::<'_, I, u8, field_sets::AlertLimit3, ::device_driver::RW>::new(
+            self.interface(),
+            address as u8,
+            field_sets::AlertLimit3::new,
+        )
     }
     /// Alert limit register 4
     pub fn alert_limit_4(
         &mut self,
-    ) -> ::device_driver::RegisterOperation<'_, I, u8, field_sets::AlertLimit4, ::device_driver::RW>
-    {
+    ) -> ::device_driver::RegisterOperation<'_, I, u8, field_sets::AlertLimit4, ::device_driver::RW> {
         let address = self.base_address + 30;
-        ::device_driver::RegisterOperation::<
-            '_,
-            I,
-            u8,
-            field_sets::AlertLimit4,
-            ::device_driver::RW,
-        >::new(self.interface(), address as u8, field_sets::AlertLimit4::new)
+        ::device_driver::RegisterOperation::<'_, I, u8, field_sets::AlertLimit4, ::device_driver::RW>::new(
+            self.interface(),
+            address as u8,
+            field_sets::AlertLimit4::new,
+        )
     }
     /// Shunt voltage channel 1. 2's complement. LSB = 2.5uV (range=0) or 625nV (range=1)
     pub fn shunt_voltage_ch_1(
         &mut self,
-    ) -> ::device_driver::RegisterOperation<
-        '_,
-        I,
-        u8,
-        field_sets::ShuntVoltageCh1,
-        ::device_driver::RO,
-    > {
+    ) -> ::device_driver::RegisterOperation<'_, I, u8, field_sets::ShuntVoltageCh1, ::device_driver::RO> {
         let address = self.base_address + 0;
-        ::device_driver::RegisterOperation::<
-            '_,
-            I,
-            u8,
-            field_sets::ShuntVoltageCh1,
-            ::device_driver::RO,
-        >::new(
+        ::device_driver::RegisterOperation::<'_, I, u8, field_sets::ShuntVoltageCh1, ::device_driver::RO>::new(
             self.interface(),
             address as u8,
             field_sets::ShuntVoltageCh1::new,
@@ -467,21 +377,9 @@ impl<I> Device<I> {
     /// Shunt voltage channel 2
     pub fn shunt_voltage_ch_2(
         &mut self,
-    ) -> ::device_driver::RegisterOperation<
-        '_,
-        I,
-        u8,
-        field_sets::ShuntVoltageCh2,
-        ::device_driver::RO,
-    > {
+    ) -> ::device_driver::RegisterOperation<'_, I, u8, field_sets::ShuntVoltageCh2, ::device_driver::RO> {
         let address = self.base_address + 8;
-        ::device_driver::RegisterOperation::<
-            '_,
-            I,
-            u8,
-            field_sets::ShuntVoltageCh2,
-            ::device_driver::RO,
-        >::new(
+        ::device_driver::RegisterOperation::<'_, I, u8, field_sets::ShuntVoltageCh2, ::device_driver::RO>::new(
             self.interface(),
             address as u8,
             field_sets::ShuntVoltageCh2::new,
@@ -490,21 +388,9 @@ impl<I> Device<I> {
     /// Shunt voltage channel 3
     pub fn shunt_voltage_ch_3(
         &mut self,
-    ) -> ::device_driver::RegisterOperation<
-        '_,
-        I,
-        u8,
-        field_sets::ShuntVoltageCh3,
-        ::device_driver::RO,
-    > {
+    ) -> ::device_driver::RegisterOperation<'_, I, u8, field_sets::ShuntVoltageCh3, ::device_driver::RO> {
         let address = self.base_address + 16;
-        ::device_driver::RegisterOperation::<
-            '_,
-            I,
-            u8,
-            field_sets::ShuntVoltageCh3,
-            ::device_driver::RO,
-        >::new(
+        ::device_driver::RegisterOperation::<'_, I, u8, field_sets::ShuntVoltageCh3, ::device_driver::RO>::new(
             self.interface(),
             address as u8,
             field_sets::ShuntVoltageCh3::new,
@@ -513,21 +399,9 @@ impl<I> Device<I> {
     /// Shunt voltage channel 4
     pub fn shunt_voltage_ch_4(
         &mut self,
-    ) -> ::device_driver::RegisterOperation<
-        '_,
-        I,
-        u8,
-        field_sets::ShuntVoltageCh4,
-        ::device_driver::RO,
-    > {
+    ) -> ::device_driver::RegisterOperation<'_, I, u8, field_sets::ShuntVoltageCh4, ::device_driver::RO> {
         let address = self.base_address + 24;
-        ::device_driver::RegisterOperation::<
-            '_,
-            I,
-            u8,
-            field_sets::ShuntVoltageCh4,
-            ::device_driver::RO,
-        >::new(
+        ::device_driver::RegisterOperation::<'_, I, u8, field_sets::ShuntVoltageCh4, ::device_driver::RO>::new(
             self.interface(),
             address as u8,
             field_sets::ShuntVoltageCh4::new,
@@ -536,16 +410,9 @@ impl<I> Device<I> {
     /// Bus voltage channel 1. Always positive. LSB = 1.6mV
     pub fn bus_voltage_ch_1(
         &mut self,
-    ) -> ::device_driver::RegisterOperation<'_, I, u8, field_sets::BusVoltageCh1, ::device_driver::RO>
-    {
+    ) -> ::device_driver::RegisterOperation<'_, I, u8, field_sets::BusVoltageCh1, ::device_driver::RO> {
         let address = self.base_address + 1;
-        ::device_driver::RegisterOperation::<
-            '_,
-            I,
-            u8,
-            field_sets::BusVoltageCh1,
-            ::device_driver::RO,
-        >::new(
+        ::device_driver::RegisterOperation::<'_, I, u8, field_sets::BusVoltageCh1, ::device_driver::RO>::new(
             self.interface(),
             address as u8,
             field_sets::BusVoltageCh1::new,
@@ -554,16 +421,9 @@ impl<I> Device<I> {
     /// Bus voltage channel 2
     pub fn bus_voltage_ch_2(
         &mut self,
-    ) -> ::device_driver::RegisterOperation<'_, I, u8, field_sets::BusVoltageCh2, ::device_driver::RO>
-    {
+    ) -> ::device_driver::RegisterOperation<'_, I, u8, field_sets::BusVoltageCh2, ::device_driver::RO> {
         let address = self.base_address + 9;
-        ::device_driver::RegisterOperation::<
-            '_,
-            I,
-            u8,
-            field_sets::BusVoltageCh2,
-            ::device_driver::RO,
-        >::new(
+        ::device_driver::RegisterOperation::<'_, I, u8, field_sets::BusVoltageCh2, ::device_driver::RO>::new(
             self.interface(),
             address as u8,
             field_sets::BusVoltageCh2::new,
@@ -572,16 +432,9 @@ impl<I> Device<I> {
     /// Bus voltage channel 3
     pub fn bus_voltage_ch_3(
         &mut self,
-    ) -> ::device_driver::RegisterOperation<'_, I, u8, field_sets::BusVoltageCh3, ::device_driver::RO>
-    {
+    ) -> ::device_driver::RegisterOperation<'_, I, u8, field_sets::BusVoltageCh3, ::device_driver::RO> {
         let address = self.base_address + 17;
-        ::device_driver::RegisterOperation::<
-            '_,
-            I,
-            u8,
-            field_sets::BusVoltageCh3,
-            ::device_driver::RO,
-        >::new(
+        ::device_driver::RegisterOperation::<'_, I, u8, field_sets::BusVoltageCh3, ::device_driver::RO>::new(
             self.interface(),
             address as u8,
             field_sets::BusVoltageCh3::new,
@@ -590,16 +443,9 @@ impl<I> Device<I> {
     /// Bus voltage channel 4
     pub fn bus_voltage_ch_4(
         &mut self,
-    ) -> ::device_driver::RegisterOperation<'_, I, u8, field_sets::BusVoltageCh4, ::device_driver::RO>
-    {
+    ) -> ::device_driver::RegisterOperation<'_, I, u8, field_sets::BusVoltageCh4, ::device_driver::RO> {
         let address = self.base_address + 25;
-        ::device_driver::RegisterOperation::<
-            '_,
-            I,
-            u8,
-            field_sets::BusVoltageCh4,
-            ::device_driver::RO,
-        >::new(
+        ::device_driver::RegisterOperation::<'_, I, u8, field_sets::BusVoltageCh4, ::device_driver::RO>::new(
             self.interface(),
             address as u8,
             field_sets::BusVoltageCh4::new,
@@ -608,175 +454,137 @@ impl<I> Device<I> {
     /// Current channel 1. Value [A] = CURRENT_LSB x register_value
     pub fn current_ch_1(
         &mut self,
-    ) -> ::device_driver::RegisterOperation<'_, I, u8, field_sets::CurrentCh1, ::device_driver::RO>
-    {
+    ) -> ::device_driver::RegisterOperation<'_, I, u8, field_sets::CurrentCh1, ::device_driver::RO> {
         let address = self.base_address + 2;
-        ::device_driver::RegisterOperation::<
-            '_,
-            I,
-            u8,
-            field_sets::CurrentCh1,
-            ::device_driver::RO,
-        >::new(self.interface(), address as u8, field_sets::CurrentCh1::new)
+        ::device_driver::RegisterOperation::<'_, I, u8, field_sets::CurrentCh1, ::device_driver::RO>::new(
+            self.interface(),
+            address as u8,
+            field_sets::CurrentCh1::new,
+        )
     }
     /// Current channel 2
     pub fn current_ch_2(
         &mut self,
-    ) -> ::device_driver::RegisterOperation<'_, I, u8, field_sets::CurrentCh2, ::device_driver::RO>
-    {
+    ) -> ::device_driver::RegisterOperation<'_, I, u8, field_sets::CurrentCh2, ::device_driver::RO> {
         let address = self.base_address + 10;
-        ::device_driver::RegisterOperation::<
-            '_,
-            I,
-            u8,
-            field_sets::CurrentCh2,
-            ::device_driver::RO,
-        >::new(self.interface(), address as u8, field_sets::CurrentCh2::new)
+        ::device_driver::RegisterOperation::<'_, I, u8, field_sets::CurrentCh2, ::device_driver::RO>::new(
+            self.interface(),
+            address as u8,
+            field_sets::CurrentCh2::new,
+        )
     }
     /// Current channel 3
     pub fn current_ch_3(
         &mut self,
-    ) -> ::device_driver::RegisterOperation<'_, I, u8, field_sets::CurrentCh3, ::device_driver::RO>
-    {
+    ) -> ::device_driver::RegisterOperation<'_, I, u8, field_sets::CurrentCh3, ::device_driver::RO> {
         let address = self.base_address + 18;
-        ::device_driver::RegisterOperation::<
-            '_,
-            I,
-            u8,
-            field_sets::CurrentCh3,
-            ::device_driver::RO,
-        >::new(self.interface(), address as u8, field_sets::CurrentCh3::new)
+        ::device_driver::RegisterOperation::<'_, I, u8, field_sets::CurrentCh3, ::device_driver::RO>::new(
+            self.interface(),
+            address as u8,
+            field_sets::CurrentCh3::new,
+        )
     }
     /// Current channel 4
     pub fn current_ch_4(
         &mut self,
-    ) -> ::device_driver::RegisterOperation<'_, I, u8, field_sets::CurrentCh4, ::device_driver::RO>
-    {
+    ) -> ::device_driver::RegisterOperation<'_, I, u8, field_sets::CurrentCh4, ::device_driver::RO> {
         let address = self.base_address + 26;
-        ::device_driver::RegisterOperation::<
-            '_,
-            I,
-            u8,
-            field_sets::CurrentCh4,
-            ::device_driver::RO,
-        >::new(self.interface(), address as u8, field_sets::CurrentCh4::new)
+        ::device_driver::RegisterOperation::<'_, I, u8, field_sets::CurrentCh4, ::device_driver::RO>::new(
+            self.interface(),
+            address as u8,
+            field_sets::CurrentCh4::new,
+        )
     }
     /// Power channel 1. Value [W] = 32 x CURRENT_LSB x register_value. Unsigned.
     pub fn power_ch_1(
         &mut self,
-    ) -> ::device_driver::RegisterOperation<'_, I, u8, field_sets::PowerCh1, ::device_driver::RO>
-    {
+    ) -> ::device_driver::RegisterOperation<'_, I, u8, field_sets::PowerCh1, ::device_driver::RO> {
         let address = self.base_address + 3;
-        ::device_driver::RegisterOperation::<
-            '_,
-            I,
-            u8,
-            field_sets::PowerCh1,
-            ::device_driver::RO,
-        >::new(self.interface(), address as u8, field_sets::PowerCh1::new)
+        ::device_driver::RegisterOperation::<'_, I, u8, field_sets::PowerCh1, ::device_driver::RO>::new(
+            self.interface(),
+            address as u8,
+            field_sets::PowerCh1::new,
+        )
     }
     /// Power channel 2
     pub fn power_ch_2(
         &mut self,
-    ) -> ::device_driver::RegisterOperation<'_, I, u8, field_sets::PowerCh2, ::device_driver::RO>
-    {
+    ) -> ::device_driver::RegisterOperation<'_, I, u8, field_sets::PowerCh2, ::device_driver::RO> {
         let address = self.base_address + 11;
-        ::device_driver::RegisterOperation::<
-            '_,
-            I,
-            u8,
-            field_sets::PowerCh2,
-            ::device_driver::RO,
-        >::new(self.interface(), address as u8, field_sets::PowerCh2::new)
+        ::device_driver::RegisterOperation::<'_, I, u8, field_sets::PowerCh2, ::device_driver::RO>::new(
+            self.interface(),
+            address as u8,
+            field_sets::PowerCh2::new,
+        )
     }
     /// Power channel 3
     pub fn power_ch_3(
         &mut self,
-    ) -> ::device_driver::RegisterOperation<'_, I, u8, field_sets::PowerCh3, ::device_driver::RO>
-    {
+    ) -> ::device_driver::RegisterOperation<'_, I, u8, field_sets::PowerCh3, ::device_driver::RO> {
         let address = self.base_address + 19;
-        ::device_driver::RegisterOperation::<
-            '_,
-            I,
-            u8,
-            field_sets::PowerCh3,
-            ::device_driver::RO,
-        >::new(self.interface(), address as u8, field_sets::PowerCh3::new)
+        ::device_driver::RegisterOperation::<'_, I, u8, field_sets::PowerCh3, ::device_driver::RO>::new(
+            self.interface(),
+            address as u8,
+            field_sets::PowerCh3::new,
+        )
     }
     /// Power channel 4
     pub fn power_ch_4(
         &mut self,
-    ) -> ::device_driver::RegisterOperation<'_, I, u8, field_sets::PowerCh4, ::device_driver::RO>
-    {
+    ) -> ::device_driver::RegisterOperation<'_, I, u8, field_sets::PowerCh4, ::device_driver::RO> {
         let address = self.base_address + 27;
-        ::device_driver::RegisterOperation::<
-            '_,
-            I,
-            u8,
-            field_sets::PowerCh4,
-            ::device_driver::RO,
-        >::new(self.interface(), address as u8, field_sets::PowerCh4::new)
+        ::device_driver::RegisterOperation::<'_, I, u8, field_sets::PowerCh4, ::device_driver::RO>::new(
+            self.interface(),
+            address as u8,
+            field_sets::PowerCh4::new,
+        )
     }
     /// Energy channel 1. Value [J] = 32 x CURRENT_LSB x register_value. Unsigned.
     pub fn energy_ch_1(
         &mut self,
-    ) -> ::device_driver::RegisterOperation<'_, I, u8, field_sets::EnergyCh1, ::device_driver::RO>
-    {
+    ) -> ::device_driver::RegisterOperation<'_, I, u8, field_sets::EnergyCh1, ::device_driver::RO> {
         let address = self.base_address + 4;
-        ::device_driver::RegisterOperation::<
-            '_,
-            I,
-            u8,
-            field_sets::EnergyCh1,
-            ::device_driver::RO,
-        >::new(self.interface(), address as u8, field_sets::EnergyCh1::new)
+        ::device_driver::RegisterOperation::<'_, I, u8, field_sets::EnergyCh1, ::device_driver::RO>::new(
+            self.interface(),
+            address as u8,
+            field_sets::EnergyCh1::new,
+        )
     }
     /// Energy channel 2
     pub fn energy_ch_2(
         &mut self,
-    ) -> ::device_driver::RegisterOperation<'_, I, u8, field_sets::EnergyCh2, ::device_driver::RO>
-    {
+    ) -> ::device_driver::RegisterOperation<'_, I, u8, field_sets::EnergyCh2, ::device_driver::RO> {
         let address = self.base_address + 12;
-        ::device_driver::RegisterOperation::<
-            '_,
-            I,
-            u8,
-            field_sets::EnergyCh2,
-            ::device_driver::RO,
-        >::new(self.interface(), address as u8, field_sets::EnergyCh2::new)
+        ::device_driver::RegisterOperation::<'_, I, u8, field_sets::EnergyCh2, ::device_driver::RO>::new(
+            self.interface(),
+            address as u8,
+            field_sets::EnergyCh2::new,
+        )
     }
     /// Energy channel 3
     pub fn energy_ch_3(
         &mut self,
-    ) -> ::device_driver::RegisterOperation<'_, I, u8, field_sets::EnergyCh3, ::device_driver::RO>
-    {
+    ) -> ::device_driver::RegisterOperation<'_, I, u8, field_sets::EnergyCh3, ::device_driver::RO> {
         let address = self.base_address + 20;
-        ::device_driver::RegisterOperation::<
-            '_,
-            I,
-            u8,
-            field_sets::EnergyCh3,
-            ::device_driver::RO,
-        >::new(self.interface(), address as u8, field_sets::EnergyCh3::new)
+        ::device_driver::RegisterOperation::<'_, I, u8, field_sets::EnergyCh3, ::device_driver::RO>::new(
+            self.interface(),
+            address as u8,
+            field_sets::EnergyCh3::new,
+        )
     }
     /// Energy channel 4
     pub fn energy_ch_4(
         &mut self,
-    ) -> ::device_driver::RegisterOperation<'_, I, u8, field_sets::EnergyCh4, ::device_driver::RO>
-    {
+    ) -> ::device_driver::RegisterOperation<'_, I, u8, field_sets::EnergyCh4, ::device_driver::RO> {
         let address = self.base_address + 28;
-        ::device_driver::RegisterOperation::<
-            '_,
-            I,
-            u8,
-            field_sets::EnergyCh4,
-            ::device_driver::RO,
-        >::new(self.interface(), address as u8, field_sets::EnergyCh4::new)
+        ::device_driver::RegisterOperation::<'_, I, u8, field_sets::EnergyCh4, ::device_driver::RO>::new(
+            self.interface(),
+            address as u8,
+            field_sets::EnergyCh4::new,
+        )
     }
     /// Flags register
-    pub fn flags(
-        &mut self,
-    ) -> ::device_driver::RegisterOperation<'_, I, u8, field_sets::Flags, ::device_driver::RO> {
+    pub fn flags(&mut self) -> ::device_driver::RegisterOperation<'_, I, u8, field_sets::Flags, ::device_driver::RO> {
         let address = self.base_address + 34;
         ::device_driver::RegisterOperation::<'_, I, u8, field_sets::Flags, ::device_driver::RO>::new(
             self.interface(),
@@ -787,21 +595,9 @@ impl<I> Device<I> {
     /// Manufacturer ID. Reads back 0x5449 ('TI' in ASCII)
     pub fn manufacturer_id(
         &mut self,
-    ) -> ::device_driver::RegisterOperation<
-        '_,
-        I,
-        u8,
-        field_sets::ManufacturerId,
-        ::device_driver::RO,
-    > {
+    ) -> ::device_driver::RegisterOperation<'_, I, u8, field_sets::ManufacturerId, ::device_driver::RO> {
         let address = self.base_address + 126;
-        ::device_driver::RegisterOperation::<
-            '_,
-            I,
-            u8,
-            field_sets::ManufacturerId,
-            ::device_driver::RO,
-        >::new(
+        ::device_driver::RegisterOperation::<'_, I, u8, field_sets::ManufacturerId, ::device_driver::RO>::new(
             self.interface(),
             address as u8,
             field_sets::ManufacturerId::new,
@@ -843,45 +639,35 @@ pub mod field_sets {
         ///
         /// Active channel enable bits. Bit15=CH4, Bit14=CH3, Bit13=CH2, Bit12=CH1
         pub fn active_channel(&self) -> u8 {
-            let raw = unsafe {
-                ::device_driver::ops::load_lsb0::<u8, ::device_driver::ops::BE>(&self.bits, 12, 16)
-            };
+            let raw = unsafe { ::device_driver::ops::load_lsb0::<u8, ::device_driver::ops::BE>(&self.bits, 12, 16) };
             raw
         }
         ///Read the `avg` field of the register.
         ///
         /// Number of ADC conversion results to average
         pub fn avg(&self) -> super::Averaging {
-            let raw = unsafe {
-                ::device_driver::ops::load_lsb0::<u8, ::device_driver::ops::BE>(&self.bits, 9, 12)
-            };
+            let raw = unsafe { ::device_driver::ops::load_lsb0::<u8, ::device_driver::ops::BE>(&self.bits, 9, 12) };
             unsafe { raw.try_into().unwrap_unchecked() }
         }
         ///Read the `vbusct` field of the register.
         ///
         /// Bus voltage conversion time
         pub fn vbusct(&self) -> super::BusConversionTime {
-            let raw = unsafe {
-                ::device_driver::ops::load_lsb0::<u8, ::device_driver::ops::BE>(&self.bits, 6, 9)
-            };
+            let raw = unsafe { ::device_driver::ops::load_lsb0::<u8, ::device_driver::ops::BE>(&self.bits, 6, 9) };
             unsafe { raw.try_into().unwrap_unchecked() }
         }
         ///Read the `vshct` field of the register.
         ///
         /// Shunt voltage conversion time
         pub fn vshct(&self) -> super::ShuntConversionTime {
-            let raw = unsafe {
-                ::device_driver::ops::load_lsb0::<u8, ::device_driver::ops::BE>(&self.bits, 3, 6)
-            };
+            let raw = unsafe { ::device_driver::ops::load_lsb0::<u8, ::device_driver::ops::BE>(&self.bits, 3, 6) };
             unsafe { raw.try_into().unwrap_unchecked() }
         }
         ///Read the `mode` field of the register.
         ///
         /// Operating mode
         pub fn mode(&self) -> super::Mode {
-            let raw = unsafe {
-                ::device_driver::ops::load_lsb0::<u8, ::device_driver::ops::BE>(&self.bits, 0, 3)
-            };
+            let raw = unsafe { ::device_driver::ops::load_lsb0::<u8, ::device_driver::ops::BE>(&self.bits, 0, 3) };
             unsafe { raw.try_into().unwrap_unchecked() }
         }
         ///Write the `active_channel` field of the register.
@@ -889,70 +675,35 @@ pub mod field_sets {
         /// Active channel enable bits. Bit15=CH4, Bit14=CH3, Bit13=CH2, Bit12=CH1
         pub fn set_active_channel(&mut self, value: u8) {
             let raw = value;
-            unsafe {
-                ::device_driver::ops::store_lsb0::<u8, ::device_driver::ops::BE>(
-                    raw,
-                    12,
-                    16,
-                    &mut self.bits,
-                )
-            };
+            unsafe { ::device_driver::ops::store_lsb0::<u8, ::device_driver::ops::BE>(raw, 12, 16, &mut self.bits) };
         }
         ///Write the `avg` field of the register.
         ///
         /// Number of ADC conversion results to average
         pub fn set_avg(&mut self, value: super::Averaging) {
             let raw = value.into();
-            unsafe {
-                ::device_driver::ops::store_lsb0::<u8, ::device_driver::ops::BE>(
-                    raw,
-                    9,
-                    12,
-                    &mut self.bits,
-                )
-            };
+            unsafe { ::device_driver::ops::store_lsb0::<u8, ::device_driver::ops::BE>(raw, 9, 12, &mut self.bits) };
         }
         ///Write the `vbusct` field of the register.
         ///
         /// Bus voltage conversion time
         pub fn set_vbusct(&mut self, value: super::BusConversionTime) {
             let raw = value.into();
-            unsafe {
-                ::device_driver::ops::store_lsb0::<u8, ::device_driver::ops::BE>(
-                    raw,
-                    6,
-                    9,
-                    &mut self.bits,
-                )
-            };
+            unsafe { ::device_driver::ops::store_lsb0::<u8, ::device_driver::ops::BE>(raw, 6, 9, &mut self.bits) };
         }
         ///Write the `vshct` field of the register.
         ///
         /// Shunt voltage conversion time
         pub fn set_vshct(&mut self, value: super::ShuntConversionTime) {
             let raw = value.into();
-            unsafe {
-                ::device_driver::ops::store_lsb0::<u8, ::device_driver::ops::BE>(
-                    raw,
-                    3,
-                    6,
-                    &mut self.bits,
-                )
-            };
+            unsafe { ::device_driver::ops::store_lsb0::<u8, ::device_driver::ops::BE>(raw, 3, 6, &mut self.bits) };
         }
         ///Write the `mode` field of the register.
         ///
         /// Operating mode
         pub fn set_mode(&mut self, value: super::Mode) {
             let raw = value.into();
-            unsafe {
-                ::device_driver::ops::store_lsb0::<u8, ::device_driver::ops::BE>(
-                    raw,
-                    0,
-                    3,
-                    &mut self.bits,
-                )
-            };
+            unsafe { ::device_driver::ops::store_lsb0::<u8, ::device_driver::ops::BE>(raw, 0, 3, &mut self.bits) };
         }
     }
     impl From<[u8; 2]> for Config1 {
@@ -976,7 +727,7 @@ pub mod field_sets {
             d.finish()
         }
     }
-    #[cfg(feature = "defmt-03")]
+    #[cfg(feature = "defmt")]
     impl defmt::Format for Config1 {
         fn format(&self, f: defmt::Formatter) {
             defmt::write!(f, "Config1 {{ ");
@@ -1070,63 +821,49 @@ pub mod field_sets {
         ///
         /// System reset. Set to 1 to reset all registers to default. Self-clears.
         pub fn rst(&self) -> bool {
-            let raw = unsafe {
-                ::device_driver::ops::load_lsb0::<u8, ::device_driver::ops::BE>(&self.bits, 15, 16)
-            };
+            let raw = unsafe { ::device_driver::ops::load_lsb0::<u8, ::device_driver::ops::BE>(&self.bits, 15, 16) };
             raw > 0
         }
         ///Read the `acc_rst` field of the register.
         ///
         /// Energy accumulator reset per channel. Bit11=CH4, Bit10=CH3, Bit9=CH2, Bit8=CH1. Bits self-clear after write.
         pub fn acc_rst(&self) -> u8 {
-            let raw = unsafe {
-                ::device_driver::ops::load_lsb0::<u8, ::device_driver::ops::BE>(&self.bits, 8, 12)
-            };
+            let raw = unsafe { ::device_driver::ops::load_lsb0::<u8, ::device_driver::ops::BE>(&self.bits, 8, 12) };
             raw
         }
         ///Read the `cnvr_mask` field of the register.
         ///
         /// Conversion ready flag on ALERT pin enable
         pub fn cnvr_mask(&self) -> bool {
-            let raw = unsafe {
-                ::device_driver::ops::load_lsb0::<u8, ::device_driver::ops::BE>(&self.bits, 7, 8)
-            };
+            let raw = unsafe { ::device_driver::ops::load_lsb0::<u8, ::device_driver::ops::BE>(&self.bits, 7, 8) };
             raw > 0
         }
         ///Read the `enof_mask` field of the register.
         ///
         /// Energy overflow alert enable
         pub fn enof_mask(&self) -> bool {
-            let raw = unsafe {
-                ::device_driver::ops::load_lsb0::<u8, ::device_driver::ops::BE>(&self.bits, 6, 7)
-            };
+            let raw = unsafe { ::device_driver::ops::load_lsb0::<u8, ::device_driver::ops::BE>(&self.bits, 6, 7) };
             raw > 0
         }
         ///Read the `alert_latch` field of the register.
         ///
         /// Alert pin latch enable. When set, alert latches until flags register is read.
         pub fn alert_latch(&self) -> bool {
-            let raw = unsafe {
-                ::device_driver::ops::load_lsb0::<u8, ::device_driver::ops::BE>(&self.bits, 5, 6)
-            };
+            let raw = unsafe { ::device_driver::ops::load_lsb0::<u8, ::device_driver::ops::BE>(&self.bits, 5, 6) };
             raw > 0
         }
         ///Read the `alert_pol` field of the register.
         ///
         /// Alert pin polarity
         pub fn alert_pol(&self) -> super::AlertPolarity {
-            let raw = unsafe {
-                ::device_driver::ops::load_lsb0::<u8, ::device_driver::ops::BE>(&self.bits, 4, 5)
-            };
+            let raw = unsafe { ::device_driver::ops::load_lsb0::<u8, ::device_driver::ops::BE>(&self.bits, 4, 5) };
             unsafe { raw.try_into().unwrap_unchecked() }
         }
         ///Read the `range` field of the register.
         ///
         /// Shunt full scale input range per channel. Bit3=CH4, Bit2=CH3, Bit1=CH2, Bit0=CH1. 0=±81.92mV, 1=±20.48mV
         pub fn range(&self) -> u8 {
-            let raw = unsafe {
-                ::device_driver::ops::load_lsb0::<u8, ::device_driver::ops::BE>(&self.bits, 0, 4)
-            };
+            let raw = unsafe { ::device_driver::ops::load_lsb0::<u8, ::device_driver::ops::BE>(&self.bits, 0, 4) };
             raw
         }
         ///Write the `rst` field of the register.
@@ -1134,98 +871,49 @@ pub mod field_sets {
         /// System reset. Set to 1 to reset all registers to default. Self-clears.
         pub fn set_rst(&mut self, value: bool) {
             let raw = value as _;
-            unsafe {
-                ::device_driver::ops::store_lsb0::<u8, ::device_driver::ops::BE>(
-                    raw,
-                    15,
-                    16,
-                    &mut self.bits,
-                )
-            };
+            unsafe { ::device_driver::ops::store_lsb0::<u8, ::device_driver::ops::BE>(raw, 15, 16, &mut self.bits) };
         }
         ///Write the `acc_rst` field of the register.
         ///
         /// Energy accumulator reset per channel. Bit11=CH4, Bit10=CH3, Bit9=CH2, Bit8=CH1. Bits self-clear after write.
         pub fn set_acc_rst(&mut self, value: u8) {
             let raw = value;
-            unsafe {
-                ::device_driver::ops::store_lsb0::<u8, ::device_driver::ops::BE>(
-                    raw,
-                    8,
-                    12,
-                    &mut self.bits,
-                )
-            };
+            unsafe { ::device_driver::ops::store_lsb0::<u8, ::device_driver::ops::BE>(raw, 8, 12, &mut self.bits) };
         }
         ///Write the `cnvr_mask` field of the register.
         ///
         /// Conversion ready flag on ALERT pin enable
         pub fn set_cnvr_mask(&mut self, value: bool) {
             let raw = value as _;
-            unsafe {
-                ::device_driver::ops::store_lsb0::<u8, ::device_driver::ops::BE>(
-                    raw,
-                    7,
-                    8,
-                    &mut self.bits,
-                )
-            };
+            unsafe { ::device_driver::ops::store_lsb0::<u8, ::device_driver::ops::BE>(raw, 7, 8, &mut self.bits) };
         }
         ///Write the `enof_mask` field of the register.
         ///
         /// Energy overflow alert enable
         pub fn set_enof_mask(&mut self, value: bool) {
             let raw = value as _;
-            unsafe {
-                ::device_driver::ops::store_lsb0::<u8, ::device_driver::ops::BE>(
-                    raw,
-                    6,
-                    7,
-                    &mut self.bits,
-                )
-            };
+            unsafe { ::device_driver::ops::store_lsb0::<u8, ::device_driver::ops::BE>(raw, 6, 7, &mut self.bits) };
         }
         ///Write the `alert_latch` field of the register.
         ///
         /// Alert pin latch enable. When set, alert latches until flags register is read.
         pub fn set_alert_latch(&mut self, value: bool) {
             let raw = value as _;
-            unsafe {
-                ::device_driver::ops::store_lsb0::<u8, ::device_driver::ops::BE>(
-                    raw,
-                    5,
-                    6,
-                    &mut self.bits,
-                )
-            };
+            unsafe { ::device_driver::ops::store_lsb0::<u8, ::device_driver::ops::BE>(raw, 5, 6, &mut self.bits) };
         }
         ///Write the `alert_pol` field of the register.
         ///
         /// Alert pin polarity
         pub fn set_alert_pol(&mut self, value: super::AlertPolarity) {
             let raw = value.into();
-            unsafe {
-                ::device_driver::ops::store_lsb0::<u8, ::device_driver::ops::BE>(
-                    raw,
-                    4,
-                    5,
-                    &mut self.bits,
-                )
-            };
+            unsafe { ::device_driver::ops::store_lsb0::<u8, ::device_driver::ops::BE>(raw, 4, 5, &mut self.bits) };
         }
         ///Write the `range` field of the register.
         ///
         /// Shunt full scale input range per channel. Bit3=CH4, Bit2=CH3, Bit1=CH2, Bit0=CH1. 0=±81.92mV, 1=±20.48mV
         pub fn set_range(&mut self, value: u8) {
             let raw = value;
-            unsafe {
-                ::device_driver::ops::store_lsb0::<u8, ::device_driver::ops::BE>(
-                    raw,
-                    0,
-                    4,
-                    &mut self.bits,
-                )
-            };
+            unsafe { ::device_driver::ops::store_lsb0::<u8, ::device_driver::ops::BE>(raw, 0, 4, &mut self.bits) };
         }
     }
     impl From<[u8; 2]> for Config2 {
@@ -1251,7 +939,7 @@ pub mod field_sets {
             d.finish()
         }
     }
-    #[cfg(feature = "defmt-03")]
+    #[cfg(feature = "defmt")]
     impl defmt::Format for Config2 {
         fn format(&self, f: defmt::Formatter) {
             defmt::write!(f, "Config2 {{ ");
@@ -1347,9 +1035,7 @@ pub mod field_sets {
         ///
         /// Shunt calibration value for current conversion
         pub fn shunt_cal(&self) -> u16 {
-            let raw = unsafe {
-                ::device_driver::ops::load_lsb0::<u16, ::device_driver::ops::BE>(&self.bits, 0, 15)
-            };
+            let raw = unsafe { ::device_driver::ops::load_lsb0::<u16, ::device_driver::ops::BE>(&self.bits, 0, 15) };
             raw
         }
         ///Write the `shunt_cal` field of the register.
@@ -1357,14 +1043,7 @@ pub mod field_sets {
         /// Shunt calibration value for current conversion
         pub fn set_shunt_cal(&mut self, value: u16) {
             let raw = value;
-            unsafe {
-                ::device_driver::ops::store_lsb0::<u16, ::device_driver::ops::BE>(
-                    raw,
-                    0,
-                    15,
-                    &mut self.bits,
-                )
-            };
+            unsafe { ::device_driver::ops::store_lsb0::<u16, ::device_driver::ops::BE>(raw, 0, 15, &mut self.bits) };
         }
     }
     impl From<[u8; 2]> for CalibrationCh1 {
@@ -1384,7 +1063,7 @@ pub mod field_sets {
             d.finish()
         }
     }
-    #[cfg(feature = "defmt-03")]
+    #[cfg(feature = "defmt")]
     impl defmt::Format for CalibrationCh1 {
         fn format(&self, f: defmt::Formatter) {
             defmt::write!(f, "CalibrationCh1 {{ ");
@@ -1474,9 +1153,7 @@ pub mod field_sets {
         ///
         /// Shunt calibration value for current conversion
         pub fn shunt_cal(&self) -> u16 {
-            let raw = unsafe {
-                ::device_driver::ops::load_lsb0::<u16, ::device_driver::ops::BE>(&self.bits, 0, 15)
-            };
+            let raw = unsafe { ::device_driver::ops::load_lsb0::<u16, ::device_driver::ops::BE>(&self.bits, 0, 15) };
             raw
         }
         ///Write the `shunt_cal` field of the register.
@@ -1484,14 +1161,7 @@ pub mod field_sets {
         /// Shunt calibration value for current conversion
         pub fn set_shunt_cal(&mut self, value: u16) {
             let raw = value;
-            unsafe {
-                ::device_driver::ops::store_lsb0::<u16, ::device_driver::ops::BE>(
-                    raw,
-                    0,
-                    15,
-                    &mut self.bits,
-                )
-            };
+            unsafe { ::device_driver::ops::store_lsb0::<u16, ::device_driver::ops::BE>(raw, 0, 15, &mut self.bits) };
         }
     }
     impl From<[u8; 2]> for CalibrationCh2 {
@@ -1511,7 +1181,7 @@ pub mod field_sets {
             d.finish()
         }
     }
-    #[cfg(feature = "defmt-03")]
+    #[cfg(feature = "defmt")]
     impl defmt::Format for CalibrationCh2 {
         fn format(&self, f: defmt::Formatter) {
             defmt::write!(f, "CalibrationCh2 {{ ");
@@ -1601,9 +1271,7 @@ pub mod field_sets {
         ///
         /// Shunt calibration value for current conversion
         pub fn shunt_cal(&self) -> u16 {
-            let raw = unsafe {
-                ::device_driver::ops::load_lsb0::<u16, ::device_driver::ops::BE>(&self.bits, 0, 15)
-            };
+            let raw = unsafe { ::device_driver::ops::load_lsb0::<u16, ::device_driver::ops::BE>(&self.bits, 0, 15) };
             raw
         }
         ///Write the `shunt_cal` field of the register.
@@ -1611,14 +1279,7 @@ pub mod field_sets {
         /// Shunt calibration value for current conversion
         pub fn set_shunt_cal(&mut self, value: u16) {
             let raw = value;
-            unsafe {
-                ::device_driver::ops::store_lsb0::<u16, ::device_driver::ops::BE>(
-                    raw,
-                    0,
-                    15,
-                    &mut self.bits,
-                )
-            };
+            unsafe { ::device_driver::ops::store_lsb0::<u16, ::device_driver::ops::BE>(raw, 0, 15, &mut self.bits) };
         }
     }
     impl From<[u8; 2]> for CalibrationCh3 {
@@ -1638,7 +1299,7 @@ pub mod field_sets {
             d.finish()
         }
     }
-    #[cfg(feature = "defmt-03")]
+    #[cfg(feature = "defmt")]
     impl defmt::Format for CalibrationCh3 {
         fn format(&self, f: defmt::Formatter) {
             defmt::write!(f, "CalibrationCh3 {{ ");
@@ -1728,9 +1389,7 @@ pub mod field_sets {
         ///
         /// Shunt calibration value for current conversion
         pub fn shunt_cal(&self) -> u16 {
-            let raw = unsafe {
-                ::device_driver::ops::load_lsb0::<u16, ::device_driver::ops::BE>(&self.bits, 0, 15)
-            };
+            let raw = unsafe { ::device_driver::ops::load_lsb0::<u16, ::device_driver::ops::BE>(&self.bits, 0, 15) };
             raw
         }
         ///Write the `shunt_cal` field of the register.
@@ -1738,14 +1397,7 @@ pub mod field_sets {
         /// Shunt calibration value for current conversion
         pub fn set_shunt_cal(&mut self, value: u16) {
             let raw = value;
-            unsafe {
-                ::device_driver::ops::store_lsb0::<u16, ::device_driver::ops::BE>(
-                    raw,
-                    0,
-                    15,
-                    &mut self.bits,
-                )
-            };
+            unsafe { ::device_driver::ops::store_lsb0::<u16, ::device_driver::ops::BE>(raw, 0, 15, &mut self.bits) };
         }
     }
     impl From<[u8; 2]> for CalibrationCh4 {
@@ -1765,7 +1417,7 @@ pub mod field_sets {
             d.finish()
         }
     }
-    #[cfg(feature = "defmt-03")]
+    #[cfg(feature = "defmt")]
     impl defmt::Format for CalibrationCh4 {
         fn format(&self, f: defmt::Formatter) {
             defmt::write!(f, "CalibrationCh4 {{ ");
@@ -1855,18 +1507,14 @@ pub mod field_sets {
         ///
         /// Channel assignment for this alert
         pub fn channel(&self) -> super::AlertChannel {
-            let raw = unsafe {
-                ::device_driver::ops::load_lsb0::<u8, ::device_driver::ops::BE>(&self.bits, 3, 5)
-            };
+            let raw = unsafe { ::device_driver::ops::load_lsb0::<u8, ::device_driver::ops::BE>(&self.bits, 3, 5) };
             unsafe { raw.try_into().unwrap_unchecked() }
         }
         ///Read the `alert_mask` field of the register.
         ///
         /// Active alert function selection
         pub fn alert_mask(&self) -> super::AlertFunction {
-            let raw = unsafe {
-                ::device_driver::ops::load_lsb0::<u8, ::device_driver::ops::BE>(&self.bits, 0, 3)
-            };
+            let raw = unsafe { ::device_driver::ops::load_lsb0::<u8, ::device_driver::ops::BE>(&self.bits, 0, 3) };
             unsafe { raw.try_into().unwrap_unchecked() }
         }
         ///Write the `channel` field of the register.
@@ -1874,28 +1522,14 @@ pub mod field_sets {
         /// Channel assignment for this alert
         pub fn set_channel(&mut self, value: super::AlertChannel) {
             let raw = value.into();
-            unsafe {
-                ::device_driver::ops::store_lsb0::<u8, ::device_driver::ops::BE>(
-                    raw,
-                    3,
-                    5,
-                    &mut self.bits,
-                )
-            };
+            unsafe { ::device_driver::ops::store_lsb0::<u8, ::device_driver::ops::BE>(raw, 3, 5, &mut self.bits) };
         }
         ///Write the `alert_mask` field of the register.
         ///
         /// Active alert function selection
         pub fn set_alert_mask(&mut self, value: super::AlertFunction) {
             let raw = value.into();
-            unsafe {
-                ::device_driver::ops::store_lsb0::<u8, ::device_driver::ops::BE>(
-                    raw,
-                    0,
-                    3,
-                    &mut self.bits,
-                )
-            };
+            unsafe { ::device_driver::ops::store_lsb0::<u8, ::device_driver::ops::BE>(raw, 0, 3, &mut self.bits) };
         }
     }
     impl From<[u8; 2]> for AlertConfig1 {
@@ -1916,7 +1550,7 @@ pub mod field_sets {
             d.finish()
         }
     }
-    #[cfg(feature = "defmt-03")]
+    #[cfg(feature = "defmt")]
     impl defmt::Format for AlertConfig1 {
         fn format(&self, f: defmt::Formatter) {
             defmt::write!(f, "AlertConfig1 {{ ");
@@ -2007,18 +1641,14 @@ pub mod field_sets {
         ///
         /// Channel assignment for this alert
         pub fn channel(&self) -> u8 {
-            let raw = unsafe {
-                ::device_driver::ops::load_lsb0::<u8, ::device_driver::ops::BE>(&self.bits, 3, 5)
-            };
+            let raw = unsafe { ::device_driver::ops::load_lsb0::<u8, ::device_driver::ops::BE>(&self.bits, 3, 5) };
             raw
         }
         ///Read the `alert_mask` field of the register.
         ///
         /// Active alert function selection
         pub fn alert_mask(&self) -> u8 {
-            let raw = unsafe {
-                ::device_driver::ops::load_lsb0::<u8, ::device_driver::ops::BE>(&self.bits, 0, 3)
-            };
+            let raw = unsafe { ::device_driver::ops::load_lsb0::<u8, ::device_driver::ops::BE>(&self.bits, 0, 3) };
             raw
         }
         ///Write the `channel` field of the register.
@@ -2026,28 +1656,14 @@ pub mod field_sets {
         /// Channel assignment for this alert
         pub fn set_channel(&mut self, value: u8) {
             let raw = value;
-            unsafe {
-                ::device_driver::ops::store_lsb0::<u8, ::device_driver::ops::BE>(
-                    raw,
-                    3,
-                    5,
-                    &mut self.bits,
-                )
-            };
+            unsafe { ::device_driver::ops::store_lsb0::<u8, ::device_driver::ops::BE>(raw, 3, 5, &mut self.bits) };
         }
         ///Write the `alert_mask` field of the register.
         ///
         /// Active alert function selection
         pub fn set_alert_mask(&mut self, value: u8) {
             let raw = value;
-            unsafe {
-                ::device_driver::ops::store_lsb0::<u8, ::device_driver::ops::BE>(
-                    raw,
-                    0,
-                    3,
-                    &mut self.bits,
-                )
-            };
+            unsafe { ::device_driver::ops::store_lsb0::<u8, ::device_driver::ops::BE>(raw, 0, 3, &mut self.bits) };
         }
     }
     impl From<[u8; 2]> for AlertConfig2 {
@@ -2068,7 +1684,7 @@ pub mod field_sets {
             d.finish()
         }
     }
-    #[cfg(feature = "defmt-03")]
+    #[cfg(feature = "defmt")]
     impl defmt::Format for AlertConfig2 {
         fn format(&self, f: defmt::Formatter) {
             defmt::write!(f, "AlertConfig2 {{ ");
@@ -2159,18 +1775,14 @@ pub mod field_sets {
         ///
         /// Channel assignment for this alert
         pub fn channel(&self) -> u8 {
-            let raw = unsafe {
-                ::device_driver::ops::load_lsb0::<u8, ::device_driver::ops::BE>(&self.bits, 3, 5)
-            };
+            let raw = unsafe { ::device_driver::ops::load_lsb0::<u8, ::device_driver::ops::BE>(&self.bits, 3, 5) };
             raw
         }
         ///Read the `alert_mask` field of the register.
         ///
         /// Active alert function selection
         pub fn alert_mask(&self) -> u8 {
-            let raw = unsafe {
-                ::device_driver::ops::load_lsb0::<u8, ::device_driver::ops::BE>(&self.bits, 0, 3)
-            };
+            let raw = unsafe { ::device_driver::ops::load_lsb0::<u8, ::device_driver::ops::BE>(&self.bits, 0, 3) };
             raw
         }
         ///Write the `channel` field of the register.
@@ -2178,28 +1790,14 @@ pub mod field_sets {
         /// Channel assignment for this alert
         pub fn set_channel(&mut self, value: u8) {
             let raw = value;
-            unsafe {
-                ::device_driver::ops::store_lsb0::<u8, ::device_driver::ops::BE>(
-                    raw,
-                    3,
-                    5,
-                    &mut self.bits,
-                )
-            };
+            unsafe { ::device_driver::ops::store_lsb0::<u8, ::device_driver::ops::BE>(raw, 3, 5, &mut self.bits) };
         }
         ///Write the `alert_mask` field of the register.
         ///
         /// Active alert function selection
         pub fn set_alert_mask(&mut self, value: u8) {
             let raw = value;
-            unsafe {
-                ::device_driver::ops::store_lsb0::<u8, ::device_driver::ops::BE>(
-                    raw,
-                    0,
-                    3,
-                    &mut self.bits,
-                )
-            };
+            unsafe { ::device_driver::ops::store_lsb0::<u8, ::device_driver::ops::BE>(raw, 0, 3, &mut self.bits) };
         }
     }
     impl From<[u8; 2]> for AlertConfig3 {
@@ -2220,7 +1818,7 @@ pub mod field_sets {
             d.finish()
         }
     }
-    #[cfg(feature = "defmt-03")]
+    #[cfg(feature = "defmt")]
     impl defmt::Format for AlertConfig3 {
         fn format(&self, f: defmt::Formatter) {
             defmt::write!(f, "AlertConfig3 {{ ");
@@ -2311,18 +1909,14 @@ pub mod field_sets {
         ///
         /// Channel assignment for this alert
         pub fn channel(&self) -> u8 {
-            let raw = unsafe {
-                ::device_driver::ops::load_lsb0::<u8, ::device_driver::ops::BE>(&self.bits, 3, 5)
-            };
+            let raw = unsafe { ::device_driver::ops::load_lsb0::<u8, ::device_driver::ops::BE>(&self.bits, 3, 5) };
             raw
         }
         ///Read the `alert_mask` field of the register.
         ///
         /// Active alert function selection
         pub fn alert_mask(&self) -> u8 {
-            let raw = unsafe {
-                ::device_driver::ops::load_lsb0::<u8, ::device_driver::ops::BE>(&self.bits, 0, 3)
-            };
+            let raw = unsafe { ::device_driver::ops::load_lsb0::<u8, ::device_driver::ops::BE>(&self.bits, 0, 3) };
             raw
         }
         ///Write the `channel` field of the register.
@@ -2330,28 +1924,14 @@ pub mod field_sets {
         /// Channel assignment for this alert
         pub fn set_channel(&mut self, value: u8) {
             let raw = value;
-            unsafe {
-                ::device_driver::ops::store_lsb0::<u8, ::device_driver::ops::BE>(
-                    raw,
-                    3,
-                    5,
-                    &mut self.bits,
-                )
-            };
+            unsafe { ::device_driver::ops::store_lsb0::<u8, ::device_driver::ops::BE>(raw, 3, 5, &mut self.bits) };
         }
         ///Write the `alert_mask` field of the register.
         ///
         /// Active alert function selection
         pub fn set_alert_mask(&mut self, value: u8) {
             let raw = value;
-            unsafe {
-                ::device_driver::ops::store_lsb0::<u8, ::device_driver::ops::BE>(
-                    raw,
-                    0,
-                    3,
-                    &mut self.bits,
-                )
-            };
+            unsafe { ::device_driver::ops::store_lsb0::<u8, ::device_driver::ops::BE>(raw, 0, 3, &mut self.bits) };
         }
     }
     impl From<[u8; 2]> for AlertConfig4 {
@@ -2372,7 +1952,7 @@ pub mod field_sets {
             d.finish()
         }
     }
-    #[cfg(feature = "defmt-03")]
+    #[cfg(feature = "defmt")]
     impl defmt::Format for AlertConfig4 {
         fn format(&self, f: defmt::Formatter) {
             defmt::write!(f, "AlertConfig4 {{ ");
@@ -2463,9 +2043,7 @@ pub mod field_sets {
         ///
         /// Alert threshold. Shunt=signed 16-bit, Bus=unsigned 15-bit, Power=unsigned 16-bit
         pub fn limit(&self) -> u16 {
-            let raw = unsafe {
-                ::device_driver::ops::load_lsb0::<u16, ::device_driver::ops::BE>(&self.bits, 0, 16)
-            };
+            let raw = unsafe { ::device_driver::ops::load_lsb0::<u16, ::device_driver::ops::BE>(&self.bits, 0, 16) };
             raw
         }
         ///Write the `limit` field of the register.
@@ -2473,14 +2051,7 @@ pub mod field_sets {
         /// Alert threshold. Shunt=signed 16-bit, Bus=unsigned 15-bit, Power=unsigned 16-bit
         pub fn set_limit(&mut self, value: u16) {
             let raw = value;
-            unsafe {
-                ::device_driver::ops::store_lsb0::<u16, ::device_driver::ops::BE>(
-                    raw,
-                    0,
-                    16,
-                    &mut self.bits,
-                )
-            };
+            unsafe { ::device_driver::ops::store_lsb0::<u16, ::device_driver::ops::BE>(raw, 0, 16, &mut self.bits) };
         }
     }
     impl From<[u8; 2]> for AlertLimit1 {
@@ -2500,7 +2071,7 @@ pub mod field_sets {
             d.finish()
         }
     }
-    #[cfg(feature = "defmt-03")]
+    #[cfg(feature = "defmt")]
     impl defmt::Format for AlertLimit1 {
         fn format(&self, f: defmt::Formatter) {
             defmt::write!(f, "AlertLimit1 {{ ");
@@ -2590,9 +2161,7 @@ pub mod field_sets {
         ///
         /// Alert threshold
         pub fn limit(&self) -> u16 {
-            let raw = unsafe {
-                ::device_driver::ops::load_lsb0::<u16, ::device_driver::ops::BE>(&self.bits, 0, 16)
-            };
+            let raw = unsafe { ::device_driver::ops::load_lsb0::<u16, ::device_driver::ops::BE>(&self.bits, 0, 16) };
             raw
         }
         ///Write the `limit` field of the register.
@@ -2600,14 +2169,7 @@ pub mod field_sets {
         /// Alert threshold
         pub fn set_limit(&mut self, value: u16) {
             let raw = value;
-            unsafe {
-                ::device_driver::ops::store_lsb0::<u16, ::device_driver::ops::BE>(
-                    raw,
-                    0,
-                    16,
-                    &mut self.bits,
-                )
-            };
+            unsafe { ::device_driver::ops::store_lsb0::<u16, ::device_driver::ops::BE>(raw, 0, 16, &mut self.bits) };
         }
     }
     impl From<[u8; 2]> for AlertLimit2 {
@@ -2627,7 +2189,7 @@ pub mod field_sets {
             d.finish()
         }
     }
-    #[cfg(feature = "defmt-03")]
+    #[cfg(feature = "defmt")]
     impl defmt::Format for AlertLimit2 {
         fn format(&self, f: defmt::Formatter) {
             defmt::write!(f, "AlertLimit2 {{ ");
@@ -2717,9 +2279,7 @@ pub mod field_sets {
         ///
         /// Alert threshold
         pub fn limit(&self) -> u16 {
-            let raw = unsafe {
-                ::device_driver::ops::load_lsb0::<u16, ::device_driver::ops::BE>(&self.bits, 0, 16)
-            };
+            let raw = unsafe { ::device_driver::ops::load_lsb0::<u16, ::device_driver::ops::BE>(&self.bits, 0, 16) };
             raw
         }
         ///Write the `limit` field of the register.
@@ -2727,14 +2287,7 @@ pub mod field_sets {
         /// Alert threshold
         pub fn set_limit(&mut self, value: u16) {
             let raw = value;
-            unsafe {
-                ::device_driver::ops::store_lsb0::<u16, ::device_driver::ops::BE>(
-                    raw,
-                    0,
-                    16,
-                    &mut self.bits,
-                )
-            };
+            unsafe { ::device_driver::ops::store_lsb0::<u16, ::device_driver::ops::BE>(raw, 0, 16, &mut self.bits) };
         }
     }
     impl From<[u8; 2]> for AlertLimit3 {
@@ -2754,7 +2307,7 @@ pub mod field_sets {
             d.finish()
         }
     }
-    #[cfg(feature = "defmt-03")]
+    #[cfg(feature = "defmt")]
     impl defmt::Format for AlertLimit3 {
         fn format(&self, f: defmt::Formatter) {
             defmt::write!(f, "AlertLimit3 {{ ");
@@ -2844,9 +2397,7 @@ pub mod field_sets {
         ///
         /// Alert threshold
         pub fn limit(&self) -> u16 {
-            let raw = unsafe {
-                ::device_driver::ops::load_lsb0::<u16, ::device_driver::ops::BE>(&self.bits, 0, 16)
-            };
+            let raw = unsafe { ::device_driver::ops::load_lsb0::<u16, ::device_driver::ops::BE>(&self.bits, 0, 16) };
             raw
         }
         ///Write the `limit` field of the register.
@@ -2854,14 +2405,7 @@ pub mod field_sets {
         /// Alert threshold
         pub fn set_limit(&mut self, value: u16) {
             let raw = value;
-            unsafe {
-                ::device_driver::ops::store_lsb0::<u16, ::device_driver::ops::BE>(
-                    raw,
-                    0,
-                    16,
-                    &mut self.bits,
-                )
-            };
+            unsafe { ::device_driver::ops::store_lsb0::<u16, ::device_driver::ops::BE>(raw, 0, 16, &mut self.bits) };
         }
     }
     impl From<[u8; 2]> for AlertLimit4 {
@@ -2881,7 +2425,7 @@ pub mod field_sets {
             d.finish()
         }
     }
-    #[cfg(feature = "defmt-03")]
+    #[cfg(feature = "defmt")]
     impl defmt::Format for AlertLimit4 {
         fn format(&self, f: defmt::Formatter) {
             defmt::write!(f, "AlertLimit4 {{ ");
@@ -2971,9 +2515,7 @@ pub mod field_sets {
         ///
         /// Differential shunt voltage, 2's complement
         pub fn vshunt(&self) -> u16 {
-            let raw = unsafe {
-                ::device_driver::ops::load_lsb0::<u16, ::device_driver::ops::BE>(&self.bits, 0, 16)
-            };
+            let raw = unsafe { ::device_driver::ops::load_lsb0::<u16, ::device_driver::ops::BE>(&self.bits, 0, 16) };
             raw
         }
         ///Write the `vshunt` field of the register.
@@ -2981,14 +2523,7 @@ pub mod field_sets {
         /// Differential shunt voltage, 2's complement
         pub fn set_vshunt(&mut self, value: u16) {
             let raw = value;
-            unsafe {
-                ::device_driver::ops::store_lsb0::<u16, ::device_driver::ops::BE>(
-                    raw,
-                    0,
-                    16,
-                    &mut self.bits,
-                )
-            };
+            unsafe { ::device_driver::ops::store_lsb0::<u16, ::device_driver::ops::BE>(raw, 0, 16, &mut self.bits) };
         }
     }
     impl From<[u8; 2]> for ShuntVoltageCh1 {
@@ -3008,7 +2543,7 @@ pub mod field_sets {
             d.finish()
         }
     }
-    #[cfg(feature = "defmt-03")]
+    #[cfg(feature = "defmt")]
     impl defmt::Format for ShuntVoltageCh1 {
         fn format(&self, f: defmt::Formatter) {
             defmt::write!(f, "ShuntVoltageCh1 {{ ");
@@ -3098,9 +2633,7 @@ pub mod field_sets {
         ///
         /// Differential shunt voltage, 2's complement
         pub fn vshunt(&self) -> u16 {
-            let raw = unsafe {
-                ::device_driver::ops::load_lsb0::<u16, ::device_driver::ops::BE>(&self.bits, 0, 16)
-            };
+            let raw = unsafe { ::device_driver::ops::load_lsb0::<u16, ::device_driver::ops::BE>(&self.bits, 0, 16) };
             raw
         }
         ///Write the `vshunt` field of the register.
@@ -3108,14 +2641,7 @@ pub mod field_sets {
         /// Differential shunt voltage, 2's complement
         pub fn set_vshunt(&mut self, value: u16) {
             let raw = value;
-            unsafe {
-                ::device_driver::ops::store_lsb0::<u16, ::device_driver::ops::BE>(
-                    raw,
-                    0,
-                    16,
-                    &mut self.bits,
-                )
-            };
+            unsafe { ::device_driver::ops::store_lsb0::<u16, ::device_driver::ops::BE>(raw, 0, 16, &mut self.bits) };
         }
     }
     impl From<[u8; 2]> for ShuntVoltageCh2 {
@@ -3135,7 +2661,7 @@ pub mod field_sets {
             d.finish()
         }
     }
-    #[cfg(feature = "defmt-03")]
+    #[cfg(feature = "defmt")]
     impl defmt::Format for ShuntVoltageCh2 {
         fn format(&self, f: defmt::Formatter) {
             defmt::write!(f, "ShuntVoltageCh2 {{ ");
@@ -3225,9 +2751,7 @@ pub mod field_sets {
         ///
         /// Differential shunt voltage, 2's complement
         pub fn vshunt(&self) -> u16 {
-            let raw = unsafe {
-                ::device_driver::ops::load_lsb0::<u16, ::device_driver::ops::BE>(&self.bits, 0, 16)
-            };
+            let raw = unsafe { ::device_driver::ops::load_lsb0::<u16, ::device_driver::ops::BE>(&self.bits, 0, 16) };
             raw
         }
         ///Write the `vshunt` field of the register.
@@ -3235,14 +2759,7 @@ pub mod field_sets {
         /// Differential shunt voltage, 2's complement
         pub fn set_vshunt(&mut self, value: u16) {
             let raw = value;
-            unsafe {
-                ::device_driver::ops::store_lsb0::<u16, ::device_driver::ops::BE>(
-                    raw,
-                    0,
-                    16,
-                    &mut self.bits,
-                )
-            };
+            unsafe { ::device_driver::ops::store_lsb0::<u16, ::device_driver::ops::BE>(raw, 0, 16, &mut self.bits) };
         }
     }
     impl From<[u8; 2]> for ShuntVoltageCh3 {
@@ -3262,7 +2779,7 @@ pub mod field_sets {
             d.finish()
         }
     }
-    #[cfg(feature = "defmt-03")]
+    #[cfg(feature = "defmt")]
     impl defmt::Format for ShuntVoltageCh3 {
         fn format(&self, f: defmt::Formatter) {
             defmt::write!(f, "ShuntVoltageCh3 {{ ");
@@ -3352,9 +2869,7 @@ pub mod field_sets {
         ///
         /// Differential shunt voltage, 2's complement
         pub fn vshunt(&self) -> u16 {
-            let raw = unsafe {
-                ::device_driver::ops::load_lsb0::<u16, ::device_driver::ops::BE>(&self.bits, 0, 16)
-            };
+            let raw = unsafe { ::device_driver::ops::load_lsb0::<u16, ::device_driver::ops::BE>(&self.bits, 0, 16) };
             raw
         }
         ///Write the `vshunt` field of the register.
@@ -3362,14 +2877,7 @@ pub mod field_sets {
         /// Differential shunt voltage, 2's complement
         pub fn set_vshunt(&mut self, value: u16) {
             let raw = value;
-            unsafe {
-                ::device_driver::ops::store_lsb0::<u16, ::device_driver::ops::BE>(
-                    raw,
-                    0,
-                    16,
-                    &mut self.bits,
-                )
-            };
+            unsafe { ::device_driver::ops::store_lsb0::<u16, ::device_driver::ops::BE>(raw, 0, 16, &mut self.bits) };
         }
     }
     impl From<[u8; 2]> for ShuntVoltageCh4 {
@@ -3389,7 +2897,7 @@ pub mod field_sets {
             d.finish()
         }
     }
-    #[cfg(feature = "defmt-03")]
+    #[cfg(feature = "defmt")]
     impl defmt::Format for ShuntVoltageCh4 {
         fn format(&self, f: defmt::Formatter) {
             defmt::write!(f, "ShuntVoltageCh4 {{ ");
@@ -3479,9 +2987,7 @@ pub mod field_sets {
         ///
         /// Bus voltage, always positive, 2's complement format
         pub fn vbus(&self) -> u16 {
-            let raw = unsafe {
-                ::device_driver::ops::load_lsb0::<u16, ::device_driver::ops::BE>(&self.bits, 0, 16)
-            };
+            let raw = unsafe { ::device_driver::ops::load_lsb0::<u16, ::device_driver::ops::BE>(&self.bits, 0, 16) };
             raw
         }
         ///Write the `vbus` field of the register.
@@ -3489,14 +2995,7 @@ pub mod field_sets {
         /// Bus voltage, always positive, 2's complement format
         pub fn set_vbus(&mut self, value: u16) {
             let raw = value;
-            unsafe {
-                ::device_driver::ops::store_lsb0::<u16, ::device_driver::ops::BE>(
-                    raw,
-                    0,
-                    16,
-                    &mut self.bits,
-                )
-            };
+            unsafe { ::device_driver::ops::store_lsb0::<u16, ::device_driver::ops::BE>(raw, 0, 16, &mut self.bits) };
         }
     }
     impl From<[u8; 2]> for BusVoltageCh1 {
@@ -3516,7 +3015,7 @@ pub mod field_sets {
             d.finish()
         }
     }
-    #[cfg(feature = "defmt-03")]
+    #[cfg(feature = "defmt")]
     impl defmt::Format for BusVoltageCh1 {
         fn format(&self, f: defmt::Formatter) {
             defmt::write!(f, "BusVoltageCh1 {{ ");
@@ -3606,9 +3105,7 @@ pub mod field_sets {
         ///
         /// Bus voltage
         pub fn vbus(&self) -> u16 {
-            let raw = unsafe {
-                ::device_driver::ops::load_lsb0::<u16, ::device_driver::ops::BE>(&self.bits, 0, 16)
-            };
+            let raw = unsafe { ::device_driver::ops::load_lsb0::<u16, ::device_driver::ops::BE>(&self.bits, 0, 16) };
             raw
         }
         ///Write the `vbus` field of the register.
@@ -3616,14 +3113,7 @@ pub mod field_sets {
         /// Bus voltage
         pub fn set_vbus(&mut self, value: u16) {
             let raw = value;
-            unsafe {
-                ::device_driver::ops::store_lsb0::<u16, ::device_driver::ops::BE>(
-                    raw,
-                    0,
-                    16,
-                    &mut self.bits,
-                )
-            };
+            unsafe { ::device_driver::ops::store_lsb0::<u16, ::device_driver::ops::BE>(raw, 0, 16, &mut self.bits) };
         }
     }
     impl From<[u8; 2]> for BusVoltageCh2 {
@@ -3643,7 +3133,7 @@ pub mod field_sets {
             d.finish()
         }
     }
-    #[cfg(feature = "defmt-03")]
+    #[cfg(feature = "defmt")]
     impl defmt::Format for BusVoltageCh2 {
         fn format(&self, f: defmt::Formatter) {
             defmt::write!(f, "BusVoltageCh2 {{ ");
@@ -3733,9 +3223,7 @@ pub mod field_sets {
         ///
         /// Bus voltage
         pub fn vbus(&self) -> u16 {
-            let raw = unsafe {
-                ::device_driver::ops::load_lsb0::<u16, ::device_driver::ops::BE>(&self.bits, 0, 16)
-            };
+            let raw = unsafe { ::device_driver::ops::load_lsb0::<u16, ::device_driver::ops::BE>(&self.bits, 0, 16) };
             raw
         }
         ///Write the `vbus` field of the register.
@@ -3743,14 +3231,7 @@ pub mod field_sets {
         /// Bus voltage
         pub fn set_vbus(&mut self, value: u16) {
             let raw = value;
-            unsafe {
-                ::device_driver::ops::store_lsb0::<u16, ::device_driver::ops::BE>(
-                    raw,
-                    0,
-                    16,
-                    &mut self.bits,
-                )
-            };
+            unsafe { ::device_driver::ops::store_lsb0::<u16, ::device_driver::ops::BE>(raw, 0, 16, &mut self.bits) };
         }
     }
     impl From<[u8; 2]> for BusVoltageCh3 {
@@ -3770,7 +3251,7 @@ pub mod field_sets {
             d.finish()
         }
     }
-    #[cfg(feature = "defmt-03")]
+    #[cfg(feature = "defmt")]
     impl defmt::Format for BusVoltageCh3 {
         fn format(&self, f: defmt::Formatter) {
             defmt::write!(f, "BusVoltageCh3 {{ ");
@@ -3860,9 +3341,7 @@ pub mod field_sets {
         ///
         /// Bus voltage
         pub fn vbus(&self) -> u16 {
-            let raw = unsafe {
-                ::device_driver::ops::load_lsb0::<u16, ::device_driver::ops::BE>(&self.bits, 0, 16)
-            };
+            let raw = unsafe { ::device_driver::ops::load_lsb0::<u16, ::device_driver::ops::BE>(&self.bits, 0, 16) };
             raw
         }
         ///Write the `vbus` field of the register.
@@ -3870,14 +3349,7 @@ pub mod field_sets {
         /// Bus voltage
         pub fn set_vbus(&mut self, value: u16) {
             let raw = value;
-            unsafe {
-                ::device_driver::ops::store_lsb0::<u16, ::device_driver::ops::BE>(
-                    raw,
-                    0,
-                    16,
-                    &mut self.bits,
-                )
-            };
+            unsafe { ::device_driver::ops::store_lsb0::<u16, ::device_driver::ops::BE>(raw, 0, 16, &mut self.bits) };
         }
     }
     impl From<[u8; 2]> for BusVoltageCh4 {
@@ -3897,7 +3369,7 @@ pub mod field_sets {
             d.finish()
         }
     }
-    #[cfg(feature = "defmt-03")]
+    #[cfg(feature = "defmt")]
     impl defmt::Format for BusVoltageCh4 {
         fn format(&self, f: defmt::Formatter) {
             defmt::write!(f, "BusVoltageCh4 {{ ");
@@ -3987,9 +3459,7 @@ pub mod field_sets {
         ///
         /// Calculated current in amperes, 2's complement
         pub fn current(&self) -> u16 {
-            let raw = unsafe {
-                ::device_driver::ops::load_lsb0::<u16, ::device_driver::ops::BE>(&self.bits, 0, 16)
-            };
+            let raw = unsafe { ::device_driver::ops::load_lsb0::<u16, ::device_driver::ops::BE>(&self.bits, 0, 16) };
             raw
         }
         ///Write the `current` field of the register.
@@ -3997,14 +3467,7 @@ pub mod field_sets {
         /// Calculated current in amperes, 2's complement
         pub fn set_current(&mut self, value: u16) {
             let raw = value;
-            unsafe {
-                ::device_driver::ops::store_lsb0::<u16, ::device_driver::ops::BE>(
-                    raw,
-                    0,
-                    16,
-                    &mut self.bits,
-                )
-            };
+            unsafe { ::device_driver::ops::store_lsb0::<u16, ::device_driver::ops::BE>(raw, 0, 16, &mut self.bits) };
         }
     }
     impl From<[u8; 2]> for CurrentCh1 {
@@ -4024,7 +3487,7 @@ pub mod field_sets {
             d.finish()
         }
     }
-    #[cfg(feature = "defmt-03")]
+    #[cfg(feature = "defmt")]
     impl defmt::Format for CurrentCh1 {
         fn format(&self, f: defmt::Formatter) {
             defmt::write!(f, "CurrentCh1 {{ ");
@@ -4114,9 +3577,7 @@ pub mod field_sets {
         ///
         /// Calculated current in amperes, 2's complement
         pub fn current(&self) -> u16 {
-            let raw = unsafe {
-                ::device_driver::ops::load_lsb0::<u16, ::device_driver::ops::BE>(&self.bits, 0, 16)
-            };
+            let raw = unsafe { ::device_driver::ops::load_lsb0::<u16, ::device_driver::ops::BE>(&self.bits, 0, 16) };
             raw
         }
         ///Write the `current` field of the register.
@@ -4124,14 +3585,7 @@ pub mod field_sets {
         /// Calculated current in amperes, 2's complement
         pub fn set_current(&mut self, value: u16) {
             let raw = value;
-            unsafe {
-                ::device_driver::ops::store_lsb0::<u16, ::device_driver::ops::BE>(
-                    raw,
-                    0,
-                    16,
-                    &mut self.bits,
-                )
-            };
+            unsafe { ::device_driver::ops::store_lsb0::<u16, ::device_driver::ops::BE>(raw, 0, 16, &mut self.bits) };
         }
     }
     impl From<[u8; 2]> for CurrentCh2 {
@@ -4151,7 +3605,7 @@ pub mod field_sets {
             d.finish()
         }
     }
-    #[cfg(feature = "defmt-03")]
+    #[cfg(feature = "defmt")]
     impl defmt::Format for CurrentCh2 {
         fn format(&self, f: defmt::Formatter) {
             defmt::write!(f, "CurrentCh2 {{ ");
@@ -4241,9 +3695,7 @@ pub mod field_sets {
         ///
         /// Calculated current in amperes, 2's complement
         pub fn current(&self) -> u16 {
-            let raw = unsafe {
-                ::device_driver::ops::load_lsb0::<u16, ::device_driver::ops::BE>(&self.bits, 0, 16)
-            };
+            let raw = unsafe { ::device_driver::ops::load_lsb0::<u16, ::device_driver::ops::BE>(&self.bits, 0, 16) };
             raw
         }
         ///Write the `current` field of the register.
@@ -4251,14 +3703,7 @@ pub mod field_sets {
         /// Calculated current in amperes, 2's complement
         pub fn set_current(&mut self, value: u16) {
             let raw = value;
-            unsafe {
-                ::device_driver::ops::store_lsb0::<u16, ::device_driver::ops::BE>(
-                    raw,
-                    0,
-                    16,
-                    &mut self.bits,
-                )
-            };
+            unsafe { ::device_driver::ops::store_lsb0::<u16, ::device_driver::ops::BE>(raw, 0, 16, &mut self.bits) };
         }
     }
     impl From<[u8; 2]> for CurrentCh3 {
@@ -4278,7 +3723,7 @@ pub mod field_sets {
             d.finish()
         }
     }
-    #[cfg(feature = "defmt-03")]
+    #[cfg(feature = "defmt")]
     impl defmt::Format for CurrentCh3 {
         fn format(&self, f: defmt::Formatter) {
             defmt::write!(f, "CurrentCh3 {{ ");
@@ -4368,9 +3813,7 @@ pub mod field_sets {
         ///
         /// Calculated current in amperes, 2's complement
         pub fn current(&self) -> u16 {
-            let raw = unsafe {
-                ::device_driver::ops::load_lsb0::<u16, ::device_driver::ops::BE>(&self.bits, 0, 16)
-            };
+            let raw = unsafe { ::device_driver::ops::load_lsb0::<u16, ::device_driver::ops::BE>(&self.bits, 0, 16) };
             raw
         }
         ///Write the `current` field of the register.
@@ -4378,14 +3821,7 @@ pub mod field_sets {
         /// Calculated current in amperes, 2's complement
         pub fn set_current(&mut self, value: u16) {
             let raw = value;
-            unsafe {
-                ::device_driver::ops::store_lsb0::<u16, ::device_driver::ops::BE>(
-                    raw,
-                    0,
-                    16,
-                    &mut self.bits,
-                )
-            };
+            unsafe { ::device_driver::ops::store_lsb0::<u16, ::device_driver::ops::BE>(raw, 0, 16, &mut self.bits) };
         }
     }
     impl From<[u8; 2]> for CurrentCh4 {
@@ -4405,7 +3841,7 @@ pub mod field_sets {
             d.finish()
         }
     }
-    #[cfg(feature = "defmt-03")]
+    #[cfg(feature = "defmt")]
     impl defmt::Format for CurrentCh4 {
         fn format(&self, f: defmt::Formatter) {
             defmt::write!(f, "CurrentCh4 {{ ");
@@ -4495,9 +3931,7 @@ pub mod field_sets {
         ///
         /// Calculated power in watts, unsigned
         pub fn power(&self) -> u16 {
-            let raw = unsafe {
-                ::device_driver::ops::load_lsb0::<u16, ::device_driver::ops::BE>(&self.bits, 0, 16)
-            };
+            let raw = unsafe { ::device_driver::ops::load_lsb0::<u16, ::device_driver::ops::BE>(&self.bits, 0, 16) };
             raw
         }
         ///Write the `power` field of the register.
@@ -4505,14 +3939,7 @@ pub mod field_sets {
         /// Calculated power in watts, unsigned
         pub fn set_power(&mut self, value: u16) {
             let raw = value;
-            unsafe {
-                ::device_driver::ops::store_lsb0::<u16, ::device_driver::ops::BE>(
-                    raw,
-                    0,
-                    16,
-                    &mut self.bits,
-                )
-            };
+            unsafe { ::device_driver::ops::store_lsb0::<u16, ::device_driver::ops::BE>(raw, 0, 16, &mut self.bits) };
         }
     }
     impl From<[u8; 2]> for PowerCh1 {
@@ -4532,7 +3959,7 @@ pub mod field_sets {
             d.finish()
         }
     }
-    #[cfg(feature = "defmt-03")]
+    #[cfg(feature = "defmt")]
     impl defmt::Format for PowerCh1 {
         fn format(&self, f: defmt::Formatter) {
             defmt::write!(f, "PowerCh1 {{ ");
@@ -4622,9 +4049,7 @@ pub mod field_sets {
         ///
         /// Calculated power in watts, unsigned
         pub fn power(&self) -> u16 {
-            let raw = unsafe {
-                ::device_driver::ops::load_lsb0::<u16, ::device_driver::ops::BE>(&self.bits, 0, 16)
-            };
+            let raw = unsafe { ::device_driver::ops::load_lsb0::<u16, ::device_driver::ops::BE>(&self.bits, 0, 16) };
             raw
         }
         ///Write the `power` field of the register.
@@ -4632,14 +4057,7 @@ pub mod field_sets {
         /// Calculated power in watts, unsigned
         pub fn set_power(&mut self, value: u16) {
             let raw = value;
-            unsafe {
-                ::device_driver::ops::store_lsb0::<u16, ::device_driver::ops::BE>(
-                    raw,
-                    0,
-                    16,
-                    &mut self.bits,
-                )
-            };
+            unsafe { ::device_driver::ops::store_lsb0::<u16, ::device_driver::ops::BE>(raw, 0, 16, &mut self.bits) };
         }
     }
     impl From<[u8; 2]> for PowerCh2 {
@@ -4659,7 +4077,7 @@ pub mod field_sets {
             d.finish()
         }
     }
-    #[cfg(feature = "defmt-03")]
+    #[cfg(feature = "defmt")]
     impl defmt::Format for PowerCh2 {
         fn format(&self, f: defmt::Formatter) {
             defmt::write!(f, "PowerCh2 {{ ");
@@ -4749,9 +4167,7 @@ pub mod field_sets {
         ///
         /// Calculated power in watts, unsigned
         pub fn power(&self) -> u16 {
-            let raw = unsafe {
-                ::device_driver::ops::load_lsb0::<u16, ::device_driver::ops::BE>(&self.bits, 0, 16)
-            };
+            let raw = unsafe { ::device_driver::ops::load_lsb0::<u16, ::device_driver::ops::BE>(&self.bits, 0, 16) };
             raw
         }
         ///Write the `power` field of the register.
@@ -4759,14 +4175,7 @@ pub mod field_sets {
         /// Calculated power in watts, unsigned
         pub fn set_power(&mut self, value: u16) {
             let raw = value;
-            unsafe {
-                ::device_driver::ops::store_lsb0::<u16, ::device_driver::ops::BE>(
-                    raw,
-                    0,
-                    16,
-                    &mut self.bits,
-                )
-            };
+            unsafe { ::device_driver::ops::store_lsb0::<u16, ::device_driver::ops::BE>(raw, 0, 16, &mut self.bits) };
         }
     }
     impl From<[u8; 2]> for PowerCh3 {
@@ -4786,7 +4195,7 @@ pub mod field_sets {
             d.finish()
         }
     }
-    #[cfg(feature = "defmt-03")]
+    #[cfg(feature = "defmt")]
     impl defmt::Format for PowerCh3 {
         fn format(&self, f: defmt::Formatter) {
             defmt::write!(f, "PowerCh3 {{ ");
@@ -4876,9 +4285,7 @@ pub mod field_sets {
         ///
         /// Calculated power in watts, unsigned
         pub fn power(&self) -> u16 {
-            let raw = unsafe {
-                ::device_driver::ops::load_lsb0::<u16, ::device_driver::ops::BE>(&self.bits, 0, 16)
-            };
+            let raw = unsafe { ::device_driver::ops::load_lsb0::<u16, ::device_driver::ops::BE>(&self.bits, 0, 16) };
             raw
         }
         ///Write the `power` field of the register.
@@ -4886,14 +4293,7 @@ pub mod field_sets {
         /// Calculated power in watts, unsigned
         pub fn set_power(&mut self, value: u16) {
             let raw = value;
-            unsafe {
-                ::device_driver::ops::store_lsb0::<u16, ::device_driver::ops::BE>(
-                    raw,
-                    0,
-                    16,
-                    &mut self.bits,
-                )
-            };
+            unsafe { ::device_driver::ops::store_lsb0::<u16, ::device_driver::ops::BE>(raw, 0, 16, &mut self.bits) };
         }
     }
     impl From<[u8; 2]> for PowerCh4 {
@@ -4913,7 +4313,7 @@ pub mod field_sets {
             d.finish()
         }
     }
-    #[cfg(feature = "defmt-03")]
+    #[cfg(feature = "defmt")]
     impl defmt::Format for PowerCh4 {
         fn format(&self, f: defmt::Formatter) {
             defmt::write!(f, "PowerCh4 {{ ");
@@ -5003,9 +4403,7 @@ pub mod field_sets {
         ///
         /// Accumulated energy in joules, unsigned
         pub fn energy(&self) -> u32 {
-            let raw = unsafe {
-                ::device_driver::ops::load_lsb0::<u32, ::device_driver::ops::BE>(&self.bits, 0, 32)
-            };
+            let raw = unsafe { ::device_driver::ops::load_lsb0::<u32, ::device_driver::ops::BE>(&self.bits, 0, 32) };
             raw
         }
         ///Write the `energy` field of the register.
@@ -5013,14 +4411,7 @@ pub mod field_sets {
         /// Accumulated energy in joules, unsigned
         pub fn set_energy(&mut self, value: u32) {
             let raw = value;
-            unsafe {
-                ::device_driver::ops::store_lsb0::<u32, ::device_driver::ops::BE>(
-                    raw,
-                    0,
-                    32,
-                    &mut self.bits,
-                )
-            };
+            unsafe { ::device_driver::ops::store_lsb0::<u32, ::device_driver::ops::BE>(raw, 0, 32, &mut self.bits) };
         }
     }
     impl From<[u8; 4]> for EnergyCh1 {
@@ -5040,7 +4431,7 @@ pub mod field_sets {
             d.finish()
         }
     }
-    #[cfg(feature = "defmt-03")]
+    #[cfg(feature = "defmt")]
     impl defmt::Format for EnergyCh1 {
         fn format(&self, f: defmt::Formatter) {
             defmt::write!(f, "EnergyCh1 {{ ");
@@ -5130,9 +4521,7 @@ pub mod field_sets {
         ///
         /// Accumulated energy in joules, unsigned
         pub fn energy(&self) -> u32 {
-            let raw = unsafe {
-                ::device_driver::ops::load_lsb0::<u32, ::device_driver::ops::BE>(&self.bits, 0, 32)
-            };
+            let raw = unsafe { ::device_driver::ops::load_lsb0::<u32, ::device_driver::ops::BE>(&self.bits, 0, 32) };
             raw
         }
         ///Write the `energy` field of the register.
@@ -5140,14 +4529,7 @@ pub mod field_sets {
         /// Accumulated energy in joules, unsigned
         pub fn set_energy(&mut self, value: u32) {
             let raw = value;
-            unsafe {
-                ::device_driver::ops::store_lsb0::<u32, ::device_driver::ops::BE>(
-                    raw,
-                    0,
-                    32,
-                    &mut self.bits,
-                )
-            };
+            unsafe { ::device_driver::ops::store_lsb0::<u32, ::device_driver::ops::BE>(raw, 0, 32, &mut self.bits) };
         }
     }
     impl From<[u8; 4]> for EnergyCh2 {
@@ -5167,7 +4549,7 @@ pub mod field_sets {
             d.finish()
         }
     }
-    #[cfg(feature = "defmt-03")]
+    #[cfg(feature = "defmt")]
     impl defmt::Format for EnergyCh2 {
         fn format(&self, f: defmt::Formatter) {
             defmt::write!(f, "EnergyCh2 {{ ");
@@ -5257,9 +4639,7 @@ pub mod field_sets {
         ///
         /// Accumulated energy in joules, unsigned
         pub fn energy(&self) -> u32 {
-            let raw = unsafe {
-                ::device_driver::ops::load_lsb0::<u32, ::device_driver::ops::BE>(&self.bits, 0, 32)
-            };
+            let raw = unsafe { ::device_driver::ops::load_lsb0::<u32, ::device_driver::ops::BE>(&self.bits, 0, 32) };
             raw
         }
         ///Write the `energy` field of the register.
@@ -5267,14 +4647,7 @@ pub mod field_sets {
         /// Accumulated energy in joules, unsigned
         pub fn set_energy(&mut self, value: u32) {
             let raw = value;
-            unsafe {
-                ::device_driver::ops::store_lsb0::<u32, ::device_driver::ops::BE>(
-                    raw,
-                    0,
-                    32,
-                    &mut self.bits,
-                )
-            };
+            unsafe { ::device_driver::ops::store_lsb0::<u32, ::device_driver::ops::BE>(raw, 0, 32, &mut self.bits) };
         }
     }
     impl From<[u8; 4]> for EnergyCh3 {
@@ -5294,7 +4667,7 @@ pub mod field_sets {
             d.finish()
         }
     }
-    #[cfg(feature = "defmt-03")]
+    #[cfg(feature = "defmt")]
     impl defmt::Format for EnergyCh3 {
         fn format(&self, f: defmt::Formatter) {
             defmt::write!(f, "EnergyCh3 {{ ");
@@ -5384,9 +4757,7 @@ pub mod field_sets {
         ///
         /// Accumulated energy in joules, unsigned
         pub fn energy(&self) -> u32 {
-            let raw = unsafe {
-                ::device_driver::ops::load_lsb0::<u32, ::device_driver::ops::BE>(&self.bits, 0, 32)
-            };
+            let raw = unsafe { ::device_driver::ops::load_lsb0::<u32, ::device_driver::ops::BE>(&self.bits, 0, 32) };
             raw
         }
         ///Write the `energy` field of the register.
@@ -5394,14 +4765,7 @@ pub mod field_sets {
         /// Accumulated energy in joules, unsigned
         pub fn set_energy(&mut self, value: u32) {
             let raw = value;
-            unsafe {
-                ::device_driver::ops::store_lsb0::<u32, ::device_driver::ops::BE>(
-                    raw,
-                    0,
-                    32,
-                    &mut self.bits,
-                )
-            };
+            unsafe { ::device_driver::ops::store_lsb0::<u32, ::device_driver::ops::BE>(raw, 0, 32, &mut self.bits) };
         }
     }
     impl From<[u8; 4]> for EnergyCh4 {
@@ -5421,7 +4785,7 @@ pub mod field_sets {
             d.finish()
         }
     }
-    #[cfg(feature = "defmt-03")]
+    #[cfg(feature = "defmt")]
     impl defmt::Format for EnergyCh4 {
         fn format(&self, f: defmt::Formatter) {
             defmt::write!(f, "EnergyCh4 {{ ");
@@ -5511,90 +4875,70 @@ pub mod field_sets {
         ///
         /// Alert limit 4 exceeded
         pub fn limit4_alert(&self) -> bool {
-            let raw = unsafe {
-                ::device_driver::ops::load_lsb0::<u8, ::device_driver::ops::BE>(&self.bits, 15, 16)
-            };
+            let raw = unsafe { ::device_driver::ops::load_lsb0::<u8, ::device_driver::ops::BE>(&self.bits, 15, 16) };
             raw > 0
         }
         ///Read the `limit3_alert` field of the register.
         ///
         /// Alert limit 3 exceeded
         pub fn limit3_alert(&self) -> bool {
-            let raw = unsafe {
-                ::device_driver::ops::load_lsb0::<u8, ::device_driver::ops::BE>(&self.bits, 14, 15)
-            };
+            let raw = unsafe { ::device_driver::ops::load_lsb0::<u8, ::device_driver::ops::BE>(&self.bits, 14, 15) };
             raw > 0
         }
         ///Read the `limit2_alert` field of the register.
         ///
         /// Alert limit 2 exceeded
         pub fn limit2_alert(&self) -> bool {
-            let raw = unsafe {
-                ::device_driver::ops::load_lsb0::<u8, ::device_driver::ops::BE>(&self.bits, 13, 14)
-            };
+            let raw = unsafe { ::device_driver::ops::load_lsb0::<u8, ::device_driver::ops::BE>(&self.bits, 13, 14) };
             raw > 0
         }
         ///Read the `limit1_alert` field of the register.
         ///
         /// Alert limit 1 exceeded
         pub fn limit1_alert(&self) -> bool {
-            let raw = unsafe {
-                ::device_driver::ops::load_lsb0::<u8, ::device_driver::ops::BE>(&self.bits, 12, 13)
-            };
+            let raw = unsafe { ::device_driver::ops::load_lsb0::<u8, ::device_driver::ops::BE>(&self.bits, 12, 13) };
             raw > 0
         }
         ///Read the `energyof_ch4` field of the register.
         ///
         /// Energy register overflow channel 4
         pub fn energyof_ch4(&self) -> bool {
-            let raw = unsafe {
-                ::device_driver::ops::load_lsb0::<u8, ::device_driver::ops::BE>(&self.bits, 11, 12)
-            };
+            let raw = unsafe { ::device_driver::ops::load_lsb0::<u8, ::device_driver::ops::BE>(&self.bits, 11, 12) };
             raw > 0
         }
         ///Read the `energyof_ch3` field of the register.
         ///
         /// Energy register overflow channel 3
         pub fn energyof_ch3(&self) -> bool {
-            let raw = unsafe {
-                ::device_driver::ops::load_lsb0::<u8, ::device_driver::ops::BE>(&self.bits, 10, 11)
-            };
+            let raw = unsafe { ::device_driver::ops::load_lsb0::<u8, ::device_driver::ops::BE>(&self.bits, 10, 11) };
             raw > 0
         }
         ///Read the `energyof_ch2` field of the register.
         ///
         /// Energy register overflow channel 2
         pub fn energyof_ch2(&self) -> bool {
-            let raw = unsafe {
-                ::device_driver::ops::load_lsb0::<u8, ::device_driver::ops::BE>(&self.bits, 9, 10)
-            };
+            let raw = unsafe { ::device_driver::ops::load_lsb0::<u8, ::device_driver::ops::BE>(&self.bits, 9, 10) };
             raw > 0
         }
         ///Read the `energyof_ch1` field of the register.
         ///
         /// Energy register overflow channel 1
         pub fn energyof_ch1(&self) -> bool {
-            let raw = unsafe {
-                ::device_driver::ops::load_lsb0::<u8, ::device_driver::ops::BE>(&self.bits, 8, 9)
-            };
+            let raw = unsafe { ::device_driver::ops::load_lsb0::<u8, ::device_driver::ops::BE>(&self.bits, 8, 9) };
             raw > 0
         }
         ///Read the `cvrf` field of the register.
         ///
         /// Conversion ready flag. Set when all conversions and averaging complete. Cleared by writing CONFIG1 or reading FLAGS.
         pub fn cvrf(&self) -> bool {
-            let raw = unsafe {
-                ::device_driver::ops::load_lsb0::<u8, ::device_driver::ops::BE>(&self.bits, 7, 8)
-            };
+            let raw = unsafe { ::device_driver::ops::load_lsb0::<u8, ::device_driver::ops::BE>(&self.bits, 7, 8) };
             raw > 0
         }
         ///Read the `ovf` field of the register.
         ///
         /// Math overflow flag. Indicates current and power data may be invalid.
         pub fn ovf(&self) -> bool {
-            let raw = unsafe {
-                ::device_driver::ops::load_lsb0::<u8, ::device_driver::ops::BE>(&self.bits, 6, 7)
-            };
+            let raw = unsafe { ::device_driver::ops::load_lsb0::<u8, ::device_driver::ops::BE>(&self.bits, 6, 7) };
             raw > 0
         }
         ///Write the `limit4_alert` field of the register.
@@ -5602,140 +4946,70 @@ pub mod field_sets {
         /// Alert limit 4 exceeded
         pub fn set_limit4_alert(&mut self, value: bool) {
             let raw = value as _;
-            unsafe {
-                ::device_driver::ops::store_lsb0::<u8, ::device_driver::ops::BE>(
-                    raw,
-                    15,
-                    16,
-                    &mut self.bits,
-                )
-            };
+            unsafe { ::device_driver::ops::store_lsb0::<u8, ::device_driver::ops::BE>(raw, 15, 16, &mut self.bits) };
         }
         ///Write the `limit3_alert` field of the register.
         ///
         /// Alert limit 3 exceeded
         pub fn set_limit3_alert(&mut self, value: bool) {
             let raw = value as _;
-            unsafe {
-                ::device_driver::ops::store_lsb0::<u8, ::device_driver::ops::BE>(
-                    raw,
-                    14,
-                    15,
-                    &mut self.bits,
-                )
-            };
+            unsafe { ::device_driver::ops::store_lsb0::<u8, ::device_driver::ops::BE>(raw, 14, 15, &mut self.bits) };
         }
         ///Write the `limit2_alert` field of the register.
         ///
         /// Alert limit 2 exceeded
         pub fn set_limit2_alert(&mut self, value: bool) {
             let raw = value as _;
-            unsafe {
-                ::device_driver::ops::store_lsb0::<u8, ::device_driver::ops::BE>(
-                    raw,
-                    13,
-                    14,
-                    &mut self.bits,
-                )
-            };
+            unsafe { ::device_driver::ops::store_lsb0::<u8, ::device_driver::ops::BE>(raw, 13, 14, &mut self.bits) };
         }
         ///Write the `limit1_alert` field of the register.
         ///
         /// Alert limit 1 exceeded
         pub fn set_limit1_alert(&mut self, value: bool) {
             let raw = value as _;
-            unsafe {
-                ::device_driver::ops::store_lsb0::<u8, ::device_driver::ops::BE>(
-                    raw,
-                    12,
-                    13,
-                    &mut self.bits,
-                )
-            };
+            unsafe { ::device_driver::ops::store_lsb0::<u8, ::device_driver::ops::BE>(raw, 12, 13, &mut self.bits) };
         }
         ///Write the `energyof_ch4` field of the register.
         ///
         /// Energy register overflow channel 4
         pub fn set_energyof_ch4(&mut self, value: bool) {
             let raw = value as _;
-            unsafe {
-                ::device_driver::ops::store_lsb0::<u8, ::device_driver::ops::BE>(
-                    raw,
-                    11,
-                    12,
-                    &mut self.bits,
-                )
-            };
+            unsafe { ::device_driver::ops::store_lsb0::<u8, ::device_driver::ops::BE>(raw, 11, 12, &mut self.bits) };
         }
         ///Write the `energyof_ch3` field of the register.
         ///
         /// Energy register overflow channel 3
         pub fn set_energyof_ch3(&mut self, value: bool) {
             let raw = value as _;
-            unsafe {
-                ::device_driver::ops::store_lsb0::<u8, ::device_driver::ops::BE>(
-                    raw,
-                    10,
-                    11,
-                    &mut self.bits,
-                )
-            };
+            unsafe { ::device_driver::ops::store_lsb0::<u8, ::device_driver::ops::BE>(raw, 10, 11, &mut self.bits) };
         }
         ///Write the `energyof_ch2` field of the register.
         ///
         /// Energy register overflow channel 2
         pub fn set_energyof_ch2(&mut self, value: bool) {
             let raw = value as _;
-            unsafe {
-                ::device_driver::ops::store_lsb0::<u8, ::device_driver::ops::BE>(
-                    raw,
-                    9,
-                    10,
-                    &mut self.bits,
-                )
-            };
+            unsafe { ::device_driver::ops::store_lsb0::<u8, ::device_driver::ops::BE>(raw, 9, 10, &mut self.bits) };
         }
         ///Write the `energyof_ch1` field of the register.
         ///
         /// Energy register overflow channel 1
         pub fn set_energyof_ch1(&mut self, value: bool) {
             let raw = value as _;
-            unsafe {
-                ::device_driver::ops::store_lsb0::<u8, ::device_driver::ops::BE>(
-                    raw,
-                    8,
-                    9,
-                    &mut self.bits,
-                )
-            };
+            unsafe { ::device_driver::ops::store_lsb0::<u8, ::device_driver::ops::BE>(raw, 8, 9, &mut self.bits) };
         }
         ///Write the `cvrf` field of the register.
         ///
         /// Conversion ready flag. Set when all conversions and averaging complete. Cleared by writing CONFIG1 or reading FLAGS.
         pub fn set_cvrf(&mut self, value: bool) {
             let raw = value as _;
-            unsafe {
-                ::device_driver::ops::store_lsb0::<u8, ::device_driver::ops::BE>(
-                    raw,
-                    7,
-                    8,
-                    &mut self.bits,
-                )
-            };
+            unsafe { ::device_driver::ops::store_lsb0::<u8, ::device_driver::ops::BE>(raw, 7, 8, &mut self.bits) };
         }
         ///Write the `ovf` field of the register.
         ///
         /// Math overflow flag. Indicates current and power data may be invalid.
         pub fn set_ovf(&mut self, value: bool) {
             let raw = value as _;
-            unsafe {
-                ::device_driver::ops::store_lsb0::<u8, ::device_driver::ops::BE>(
-                    raw,
-                    6,
-                    7,
-                    &mut self.bits,
-                )
-            };
+            unsafe { ::device_driver::ops::store_lsb0::<u8, ::device_driver::ops::BE>(raw, 6, 7, &mut self.bits) };
         }
     }
     impl From<[u8; 2]> for Flags {
@@ -5764,7 +5038,7 @@ pub mod field_sets {
             d.finish()
         }
     }
-    #[cfg(feature = "defmt-03")]
+    #[cfg(feature = "defmt")]
     impl defmt::Format for Flags {
         fn format(&self, f: defmt::Formatter) {
             defmt::write!(f, "Flags {{ ");
@@ -5863,9 +5137,7 @@ pub mod field_sets {
         ///
         /// Manufacturer ID
         pub fn id(&self) -> u16 {
-            let raw = unsafe {
-                ::device_driver::ops::load_lsb0::<u16, ::device_driver::ops::BE>(&self.bits, 0, 16)
-            };
+            let raw = unsafe { ::device_driver::ops::load_lsb0::<u16, ::device_driver::ops::BE>(&self.bits, 0, 16) };
             raw
         }
         ///Write the `id` field of the register.
@@ -5873,14 +5145,7 @@ pub mod field_sets {
         /// Manufacturer ID
         pub fn set_id(&mut self, value: u16) {
             let raw = value;
-            unsafe {
-                ::device_driver::ops::store_lsb0::<u16, ::device_driver::ops::BE>(
-                    raw,
-                    0,
-                    16,
-                    &mut self.bits,
-                )
-            };
+            unsafe { ::device_driver::ops::store_lsb0::<u16, ::device_driver::ops::BE>(raw, 0, 16, &mut self.bits) };
         }
     }
     impl From<[u8; 2]> for ManufacturerId {
@@ -5900,7 +5165,7 @@ pub mod field_sets {
             d.finish()
         }
     }
-    #[cfg(feature = "defmt-03")]
+    #[cfg(feature = "defmt")]
     impl defmt::Format for ManufacturerId {
         fn format(&self, f: defmt::Formatter) {
             defmt::write!(f, "ManufacturerId {{ ");
@@ -6078,7 +5343,7 @@ pub mod field_sets {
             }
         }
     }
-    #[cfg(feature = "defmt-03")]
+    #[cfg(feature = "defmt")]
     impl defmt::Format for FieldSetValue {
         fn format(&self, f: defmt::Formatter) {
             match self {
@@ -6305,7 +5570,7 @@ pub mod field_sets {
 /// Averaging count
 #[repr(u8)]
 #[derive(Debug, Copy, Clone, Eq, PartialEq, Hash)]
-#[cfg_attr(feature = "defmt-03", derive(defmt::Format))]
+#[cfg_attr(feature = "defmt", derive(defmt::Format))]
 pub enum Averaging {
     _1 = 0,
     _4 = 1,
@@ -6352,7 +5617,7 @@ impl From<Averaging> for u8 {
 /// Bus voltage conversion time
 #[repr(u8)]
 #[derive(Debug, Copy, Clone, Eq, PartialEq, Hash)]
-#[cfg_attr(feature = "defmt-03", derive(defmt::Format))]
+#[cfg_attr(feature = "defmt", derive(defmt::Format))]
 pub enum BusConversionTime {
     _140Us = 0,
     _204Us = 1,
@@ -6399,7 +5664,7 @@ impl From<BusConversionTime> for u8 {
 /// Shunt voltage conversion time
 #[repr(u8)]
 #[derive(Debug, Copy, Clone, Eq, PartialEq, Hash)]
-#[cfg_attr(feature = "defmt-03", derive(defmt::Format))]
+#[cfg_attr(feature = "defmt", derive(defmt::Format))]
 pub enum ShuntConversionTime {
     _140Us = 0,
     _204Us = 1,
@@ -6446,7 +5711,7 @@ impl From<ShuntConversionTime> for u8 {
 /// Operating mode
 #[repr(u8)]
 #[derive(Debug, Copy, Clone, Eq, PartialEq, Hash)]
-#[cfg_attr(feature = "defmt-03", derive(defmt::Format))]
+#[cfg_attr(feature = "defmt", derive(defmt::Format))]
 pub enum Mode {
     Shutdown = 0,
     ShuntTriggered = 1,
@@ -6492,7 +5757,7 @@ impl From<Mode> for u8 {
 }
 #[repr(u8)]
 #[derive(Debug, Copy, Clone, Eq, PartialEq, Hash)]
-#[cfg_attr(feature = "defmt-03", derive(defmt::Format))]
+#[cfg_attr(feature = "defmt", derive(defmt::Format))]
 pub enum AlertPolarity {
     ActiveLow = 0,
     ActiveHigh = 1,
@@ -6520,7 +5785,7 @@ impl From<AlertPolarity> for u8 {
 }
 #[repr(u8)]
 #[derive(Debug, Copy, Clone, Eq, PartialEq, Hash)]
-#[cfg_attr(feature = "defmt-03", derive(defmt::Format))]
+#[cfg_attr(feature = "defmt", derive(defmt::Format))]
 pub enum AlertChannel {
     Ch1 = 0,
     Ch2 = 1,
@@ -6554,7 +5819,7 @@ impl From<AlertChannel> for u8 {
 }
 #[repr(u8)]
 #[derive(Debug, Copy, Clone, Eq, PartialEq, Hash)]
-#[cfg_attr(feature = "defmt-03", derive(defmt::Format))]
+#[cfg_attr(feature = "defmt", derive(defmt::Format))]
 pub enum AlertFunction {
     None = 0,
     ShuntOverLimit = 1,

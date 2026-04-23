@@ -29,7 +29,7 @@ const LARGEST_REG_SIZE_BYTES: usize = 4;
 
 /// INA4230 driver error.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
-#[cfg_attr(feature = "defmt-03", derive(defmt::Format))]
+#[cfg_attr(feature = "defmt", derive(defmt::Format))]
 pub enum Ina4230Error<I2cError> {
     /// An error occurred on the I²C bus.
     Bus(I2cError),
@@ -98,7 +98,7 @@ impl<I2c: embedded_hal_async::i2c::I2c> device_driver::AsyncRegisterInterface fo
 }
 
 // ── Address pins ──────────────────────────────────────────────────────────────
-
+/// Logic level of an I²C address pin (A0 or A1) for device address selection.
 #[derive(Debug, Default, Clone, Copy, PartialEq, Eq)]
 #[cfg_attr(feature = "defmt", derive(defmt::Format))]
 pub enum AddrPinState {
@@ -115,29 +115,30 @@ pub enum AddrPinState {
 
 /// Trait for converting an (A0, A1) pair of address pin states into
 /// the corresponding I2C address.
-trait ToAddress {
+pub trait ToAddress {
+    /// Convert pin strapping to a 7-bit I²C address.
     fn to_address(self) -> u8;
 }
 
 impl ToAddress for (AddrPinState, AddrPinState) {
     fn to_address(self) -> u8 {
         match self {
-            (AddrPinState::Gnd, AddrPinState::Gnd) => 0b100_0000,
-            (AddrPinState::Gnd, AddrPinState::Vs) => 0b100_0001,
-            (AddrPinState::Gnd, AddrPinState::Sda) => 0b100_0010,
-            (AddrPinState::Gnd, AddrPinState::Scl) => 0b100_0011,
-            (AddrPinState::Vs, AddrPinState::Gnd) => 0b100_0100,
-            (AddrPinState::Vs, AddrPinState::Vs) => 0b100_0101,
-            (AddrPinState::Vs, AddrPinState::Sda) => 0b100_0110,
-            (AddrPinState::Vs, AddrPinState::Scl) => 0b100_0111,
-            (AddrPinState::Sda, AddrPinState::Gnd) => 0b100_1000,
-            (AddrPinState::Sda, AddrPinState::Vs) => 0b100_1001,
-            (AddrPinState::Sda, AddrPinState::Sda) => 0b100_1010,
-            (AddrPinState::Sda, AddrPinState::Scl) => 0b100_1011,
-            (AddrPinState::Scl, AddrPinState::Gnd) => 0b100_1100,
-            (AddrPinState::Scl, AddrPinState::Vs) => 0b100_1101,
-            (AddrPinState::Scl, AddrPinState::Sda) => 0b100_1110,
-            (AddrPinState::Scl, AddrPinState::Scl) => 0b100_1111,
+            (AddrPinState::Gnd, AddrPinState::Gnd) => 0x40,
+            (AddrPinState::Vs, AddrPinState::Gnd) => 0x41,
+            (AddrPinState::Gnd, AddrPinState::Sda) => 0x42,
+            (AddrPinState::Gnd, AddrPinState::Scl) => 0x43,
+            (AddrPinState::Gnd, AddrPinState::Vs) => 0x44,
+            (AddrPinState::Vs, AddrPinState::Vs) => 0x45,
+            (AddrPinState::Vs, AddrPinState::Sda) => 0x46,
+            (AddrPinState::Vs, AddrPinState::Scl) => 0x47,
+            (AddrPinState::Sda, AddrPinState::Gnd) => 0x48,
+            (AddrPinState::Sda, AddrPinState::Vs) => 0x49,
+            (AddrPinState::Sda, AddrPinState::Sda) => 0x4A,
+            (AddrPinState::Sda, AddrPinState::Scl) => 0x4B,
+            (AddrPinState::Scl, AddrPinState::Gnd) => 0x4C,
+            (AddrPinState::Scl, AddrPinState::Vs) => 0x4D,
+            (AddrPinState::Scl, AddrPinState::Sda) => 0x4E,
+            (AddrPinState::Scl, AddrPinState::Scl) => 0x4F,
         }
     }
 }
@@ -146,7 +147,7 @@ impl ToAddress for (AddrPinState, AddrPinState) {
 
 /// One of the four measurement channels on the INA4230.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
-#[cfg_attr(feature = "defmt-03", derive(defmt::Format))]
+#[cfg_attr(feature = "defmt", derive(defmt::Format))]
 #[repr(usize)]
 pub enum Channel {
     /// Channel 1
@@ -162,10 +163,10 @@ pub enum Channel {
 impl Channel {
     fn to_bit(self) -> u8 {
         match self {
-            Channel::Ch0 => 0b0001,
-            Channel::Ch1 => 0b0010,
-            Channel::Ch2 => 0b0100,
-            Channel::Ch3 => 0b1000,
+            Channel::Ch1 => 0b0001,
+            Channel::Ch2 => 0b0010,
+            Channel::Ch3 => 0b0100,
+            Channel::Ch4 => 0b1000,
         }
     }
 }
@@ -174,7 +175,7 @@ impl Channel {
 
 /// ADC full-scale input range for shunt voltage measurement.
 #[derive(Debug, Default, Clone, Copy, PartialEq, Eq)]
-#[cfg_attr(feature = "defmt-03", derive(defmt::Format))]
+#[cfg_attr(feature = "defmt", derive(defmt::Format))]
 pub enum AdcRange {
     /// ±81.92 mV full scale, LSB = 2.5 µV (default)
     #[default]
@@ -268,11 +269,11 @@ impl<I2c: embedded_hal_async::i2c::I2c> Ina4230<I2c> {
     /// Create a new driver instance.
     ///
     /// `a0` and `a1` select the I²C address via the pin strapping on the device.
-    pub fn new(i2c: I2c, a0: A0, a1: A1) -> Self {
+    pub fn new(i2c: I2c, a0: AddrPinState, a1: AddrPinState) -> Self {
         Self {
             device: Device::new(DeviceInterface {
                 i2c,
-                address: i2c_address(a0, a1),
+                address: (a0, a1).to_address(),
             }),
             current_lsb_a: [None; 4],
             adc_range: [AdcRange::Range0; 4],
@@ -329,22 +330,22 @@ impl<I2c: embedded_hal_async::i2c::I2c> Ina4230<I2c> {
     /// Returns [`Ina4230Error::MathOverflow`] if current or power data may be
     /// invalid, or [`Ina4230Error::EnergyOverflow`] if the energy accumulator
     /// has overflowed on any channel. Reading FLAGS clears all flags.
-pub async fn check_flags(&mut self) -> Result<(), Ina4230Error<I2c::Error>> {
-    let flags = self.device.flags().read_async().await?;
-    if flags.ovf() {
-        Err(Ina4230Error::MathOverflow)
-    } else if flags.energyof_ch1() {
-        Err(Ina4230Error::EnergyOverflow(Channel::Ch1));
-    } else if flags.energyof_ch2() {
-        Err(Ina4230Error::EnergyOverflow(Channel::Ch2));
-    } else if flags.energyof_ch3() {
-        Err(Ina4230Error::EnergyOverflow(Channel::Ch3));
-    } else if flags.energyof_ch4() {
-        Err(Ina4230Error::EnergyOverflow(Channel::Ch4));
-    } else {
-        Ok(())
+    pub async fn check_flags(&mut self) -> Result<(), Ina4230Error<I2c::Error>> {
+        let flags = self.device.flags().read_async().await?;
+        if flags.ovf() {
+            Err(Ina4230Error::MathOverflow)
+        } else if flags.energyof_ch1() {
+            Err(Ina4230Error::EnergyOverflow(Channel::Ch1))
+        } else if flags.energyof_ch2() {
+            Err(Ina4230Error::EnergyOverflow(Channel::Ch2))
+        } else if flags.energyof_ch3() {
+            Err(Ina4230Error::EnergyOverflow(Channel::Ch3))
+        } else if flags.energyof_ch4() {
+            Err(Ina4230Error::EnergyOverflow(Channel::Ch4))
+        } else {
+            Ok(())
+        }
     }
-}
     // ── Calibration ───────────────────────────────────────────────────────
 
     /// Write the calibration register for a single channel.
@@ -547,14 +548,14 @@ mod tests {
     async fn read_manufacturer_id() {
         // ManufacturerId: address 0x7E, 2 bytes BE, resets to 0x5449 ("TI" in ASCII)
         let expectations = vec![Transaction::write_read(
-            i2c_address(A0::Gnd, A1::Gnd),
+            (AddrPinState::Gnd, AddrPinState::Gnd).to_address(),
             vec![0x7E],
             vec![0x54, 0x49],
         )];
         let i2c = Mock::new(&expectations);
         let mut dev = Device::new(DeviceInterface {
             i2c,
-            address: i2c_address(A0::Gnd, A1::Gnd),
+            address: (AddrPinState::Gnd, AddrPinState::Gnd).to_address(),
         });
         let id = dev.manufacturer_id().read_async().await.unwrap();
         assert_eq!(id.id(), 0x5449);
@@ -567,11 +568,14 @@ mod tests {
         // shunt_cal for 100µA/LSB, 10mΩ: 0.00512 / (100e-6 * 0.010) = 5120
         let cal: u16 = 5120;
         let [hi, lo] = cal.to_be_bytes();
-        let expectations = vec![Transaction::write(i2c_address(A0::Gnd, A1::Gnd), vec![0x05, hi, lo])];
+        let expectations = vec![Transaction::write(
+            (AddrPinState::Gnd, AddrPinState::Gnd).to_address(),
+            vec![0x05, hi, lo],
+        )];
         let i2c = Mock::new(&expectations);
         let mut dev = Device::new(DeviceInterface {
             i2c,
-            address: i2c_address(A0::Gnd, A1::Gnd),
+            address: (AddrPinState::Gnd, AddrPinState::Gnd).to_address(),
         });
         dev.calibration_ch_1()
             .write_async(|w| w.set_shunt_cal(cal))
@@ -587,12 +591,12 @@ mod tests {
         let raw: u16 = 5000;
         let [hi, lo] = raw.to_be_bytes();
         let expectations = vec![Transaction::write_read(
-            i2c_address(A0::Gnd, A1::Gnd),
+            (AddrPinState::Gnd, AddrPinState::Gnd).to_address(),
             vec![0x01],
             vec![hi, lo],
         )];
         let i2c = Mock::new(&expectations);
-        let mut sensor = Ina4230::new(i2c, A0::Gnd, A1::Gnd);
+        let mut sensor = Ina4230::new(i2c, AddrPinState::Gnd, AddrPinState::Gnd);
         let mv = sensor.bus_voltage(Channel::Ch1).await.unwrap();
         assert!((mv - 8000.0).abs() < 0.1, "expected 8000.0 mV, got {mv}");
         sensor.release().done();
@@ -604,7 +608,7 @@ mod tests {
         let [cal_hi, cal_lo] = cal.to_be_bytes();
         let raw: u16 = 1000;
         let [hi, lo] = raw.to_be_bytes();
-        let addr = i2c_address(A0::Gnd, A1::Gnd);
+        let addr = (AddrPinState::Gnd, AddrPinState::Gnd).to_address();
         let expectations = vec![
             // calibrate: read CONFIG2
             Transaction::write_read(addr, vec![0x21], vec![0x00, 0x00]),
@@ -616,7 +620,7 @@ mod tests {
             Transaction::write_read(addr, vec![0x02], vec![hi, lo]),
         ];
         let i2c = Mock::new(&expectations);
-        let mut sensor = Ina4230::new(i2c, A0::Gnd, A1::Gnd);
+        let mut sensor = Ina4230::new(i2c, AddrPinState::Gnd, AddrPinState::Gnd);
         sensor
             .calibrate(Channel::Ch1, 100e-6, 0.010, AdcRange::Range0)
             .await
@@ -631,12 +635,12 @@ mod tests {
         let raw: u16 = 1000;
         let [hi, lo] = raw.to_be_bytes();
         let expectations = vec![Transaction::write_read(
-            i2c_address(A0::Gnd, A1::Gnd),
+            (AddrPinState::Gnd, AddrPinState::Gnd).to_address(),
             vec![0x02],
             vec![hi, lo],
         )];
         let i2c = Mock::new(&expectations);
-        let mut sensor = Ina4230::new(i2c, A0::Gnd, A1::Gnd);
+        let mut sensor = Ina4230::new(i2c, AddrPinState::Gnd, AddrPinState::Gnd);
         let result = sensor.current(Channel::Ch1).await;
         assert!(matches!(result, Err(Ina4230Error::NotCalibrated)));
         sensor.release().done();
@@ -648,7 +652,7 @@ mod tests {
         let [cal_hi, cal_lo] = cal.to_be_bytes();
         let raw: u16 = 1000;
         let [hi, lo] = raw.to_be_bytes();
-        let addr = i2c_address(A0::Gnd, A1::Gnd);
+        let addr = (AddrPinState::Gnd, AddrPinState::Gnd).to_address();
         let expectations = vec![
             // calibrate CH1: read CONFIG2
             Transaction::write_read(addr, vec![0x21], vec![0x00, 0x00]),
@@ -660,7 +664,7 @@ mod tests {
             Transaction::write_read(addr, vec![0x0A], vec![hi, lo]),
         ];
         let i2c = Mock::new(&expectations);
-        let mut sensor = Ina4230::new(i2c, A0::Gnd, A1::Gnd);
+        let mut sensor = Ina4230::new(i2c, AddrPinState::Gnd, AddrPinState::Gnd);
         sensor
             .calibrate(Channel::Ch1, 100e-6, 0.010, AdcRange::Range0)
             .await
@@ -677,13 +681,29 @@ mod tests {
         let raw: u16 = 2000; // 2000 * 1.6 mV = 3200.0 mV
         let [hi, lo] = raw.to_be_bytes();
         let expectations = vec![
-            Transaction::write_read(i2c_address(A0::Gnd, A1::Gnd), vec![0x01], vec![hi, lo]),
-            Transaction::write_read(i2c_address(A0::Gnd, A1::Gnd), vec![0x09], vec![hi, lo]),
-            Transaction::write_read(i2c_address(A0::Gnd, A1::Gnd), vec![0x11], vec![hi, lo]),
-            Transaction::write_read(i2c_address(A0::Gnd, A1::Gnd), vec![0x19], vec![hi, lo]),
+            Transaction::write_read(
+                (AddrPinState::Gnd, AddrPinState::Gnd).to_address(),
+                vec![0x01],
+                vec![hi, lo],
+            ),
+            Transaction::write_read(
+                (AddrPinState::Gnd, AddrPinState::Gnd).to_address(),
+                vec![0x09],
+                vec![hi, lo],
+            ),
+            Transaction::write_read(
+                (AddrPinState::Gnd, AddrPinState::Gnd).to_address(),
+                vec![0x11],
+                vec![hi, lo],
+            ),
+            Transaction::write_read(
+                (AddrPinState::Gnd, AddrPinState::Gnd).to_address(),
+                vec![0x19],
+                vec![hi, lo],
+            ),
         ];
         let i2c = Mock::new(&expectations);
-        let mut sensor = Ina4230::new(i2c, A0::Gnd, A1::Gnd);
+        let mut sensor = Ina4230::new(i2c, AddrPinState::Gnd, AddrPinState::Gnd);
         for ch in [Channel::Ch1, Channel::Ch2, Channel::Ch3, Channel::Ch4] {
             let mv = sensor.bus_voltage(ch).await.unwrap();
             assert!((mv - 3200.0).abs() < 0.1, "expected 3200.0 mV, got {mv}");
@@ -701,7 +721,7 @@ mod tests {
         let [h2, l2] = ch2_cal.to_be_bytes();
         let [h3, l3] = ch3_cal.to_be_bytes();
         let [h4, l4] = ch4_cal.to_be_bytes();
-        let addr = i2c_address(A0::Gnd, A1::Gnd);
+        let addr = (AddrPinState::Gnd, AddrPinState::Gnd).to_address();
         let expectations = vec![
             // calibrate CH1: read/write CONFIG2, write cal reg
             Transaction::write_read(addr, vec![0x21], vec![0x00, 0x00]),
@@ -721,7 +741,7 @@ mod tests {
             Transaction::write(addr, vec![0x1D, h4, l4]),
         ];
         let i2c = Mock::new(&expectations);
-        let mut sensor = Ina4230::new(i2c, A0::Gnd, A1::Gnd);
+        let mut sensor = Ina4230::new(i2c, AddrPinState::Gnd, AddrPinState::Gnd);
         sensor
             .calibrate_all([
                 (100e-6, 0.010, AdcRange::Range0),
@@ -736,10 +756,22 @@ mod tests {
 
     #[tokio::test]
     async fn i2c_address_all_combinations() {
-        // Verify all four address pin combinations produce correct I²C addresses
-        assert_eq!(i2c_address(A0::Gnd, A1::Gnd), 0x40);
-        assert_eq!(i2c_address(A0::Vs, A1::Gnd), 0x41);
-        assert_eq!(i2c_address(A0::Gnd, A1::Vs), 0x44);
-        assert_eq!(i2c_address(A0::Vs, A1::Vs), 0x45);
+        // Verify all 16 address pin combinations per datasheet Table 6-1
+        assert_eq!((AddrPinState::Gnd, AddrPinState::Gnd).to_address(), 0x40);
+        assert_eq!((AddrPinState::Vs, AddrPinState::Gnd).to_address(), 0x41);
+        assert_eq!((AddrPinState::Gnd, AddrPinState::Sda).to_address(), 0x42);
+        assert_eq!((AddrPinState::Gnd, AddrPinState::Scl).to_address(), 0x43);
+        assert_eq!((AddrPinState::Gnd, AddrPinState::Vs).to_address(), 0x44);
+        assert_eq!((AddrPinState::Vs, AddrPinState::Vs).to_address(), 0x45);
+        assert_eq!((AddrPinState::Vs, AddrPinState::Sda).to_address(), 0x46);
+        assert_eq!((AddrPinState::Vs, AddrPinState::Scl).to_address(), 0x47);
+        assert_eq!((AddrPinState::Sda, AddrPinState::Gnd).to_address(), 0x48);
+        assert_eq!((AddrPinState::Sda, AddrPinState::Vs).to_address(), 0x49);
+        assert_eq!((AddrPinState::Sda, AddrPinState::Sda).to_address(), 0x4A);
+        assert_eq!((AddrPinState::Sda, AddrPinState::Scl).to_address(), 0x4B);
+        assert_eq!((AddrPinState::Scl, AddrPinState::Gnd).to_address(), 0x4C);
+        assert_eq!((AddrPinState::Scl, AddrPinState::Vs).to_address(), 0x4D);
+        assert_eq!((AddrPinState::Scl, AddrPinState::Sda).to_address(), 0x4E);
+        assert_eq!((AddrPinState::Scl, AddrPinState::Scl).to_address(), 0x4F);
     }
 }
