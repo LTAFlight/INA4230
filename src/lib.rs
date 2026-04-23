@@ -329,25 +329,22 @@ impl<I2c: embedded_hal_async::i2c::I2c> Ina4230<I2c> {
     /// Returns [`Ina4230Error::MathOverflow`] if current or power data may be
     /// invalid, or [`Ina4230Error::EnergyOverflow`] if the energy accumulator
     /// has overflowed on any channel. Reading FLAGS clears all flags.
-    pub async fn check_flags(&mut self) -> Result<(), Ina4230Error<I2c::Error>> {
-        let flags = self.device.flags().read_async().await?;
-        if flags.ovf() {
-            return Err(Ina4230Error::MathOverflow);
-        }
-        if flags.energyof_ch1() {
-            return Err(Ina4230Error::EnergyOverflow(Channel::Ch1));
-        }
-        if flags.energyof_ch2() {
-            return Err(Ina4230Error::EnergyOverflow(Channel::Ch2));
-        }
-        if flags.energyof_ch3() {
-            return Err(Ina4230Error::EnergyOverflow(Channel::Ch3));
-        }
-        if flags.energyof_ch4() {
-            return Err(Ina4230Error::EnergyOverflow(Channel::Ch4));
-        }
+pub async fn check_flags(&mut self) -> Result<(), Ina4230Error<I2c::Error>> {
+    let flags = self.device.flags().read_async().await?;
+    if flags.ovf() {
+        Err(Ina4230Error::MathOverflow)
+    } else if flags.energyof_ch1() {
+        Err(Ina4230Error::EnergyOverflow(Channel::Ch1));
+    } else if flags.energyof_ch2() {
+        Err(Ina4230Error::EnergyOverflow(Channel::Ch2));
+    } else if flags.energyof_ch3() {
+        Err(Ina4230Error::EnergyOverflow(Channel::Ch3));
+    } else if flags.energyof_ch4() {
+        Err(Ina4230Error::EnergyOverflow(Channel::Ch4));
+    } else {
         Ok(())
     }
+}
     // ── Calibration ───────────────────────────────────────────────────────
 
     /// Write the calibration register for a single channel.
