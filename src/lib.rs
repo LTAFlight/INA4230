@@ -310,7 +310,7 @@ impl<I2c: embedded_hal_async::i2c::I2c> Ina4230<I2c> {
 
     /// Enable or disable a channel in `CONFIG1.ACTIVE_CHANNEL`.   ← add here
     pub async fn set_channel_active(&mut self, channel: Channel, active: bool) -> Result<(), Ina4230Error<I2c::Error>> {
-        let bit = 1u8 << (channel as usize);
+        let bit = channel.to_bit();
         self.device
             .config_1()
             .modify_async(|w| {
