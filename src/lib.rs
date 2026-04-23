@@ -22,11 +22,6 @@ mod device;
 
 pub use crate::device::*;
 
-// ── I²C address ───────────────────────────────────────────────────────────────
-
-/// Default 7-bit I²C address for the INA4230 (A0=GND, A1=GND → 0x40).
-pub const INA4230_ADDR: u8 = 0x40;
-
 /// Maximum register data size in bytes (energy registers are 32-bit = 4 bytes).
 const LARGEST_REG_SIZE_BYTES: usize = 4;
 
@@ -38,12 +33,23 @@ const LARGEST_REG_SIZE_BYTES: usize = 4;
 pub enum Ina4230Error<I2cError> {
     /// An error occurred on the I²C bus.
     Bus(I2cError),
+    /// A measurement was requested before calibration was configured.
+    NotCalibrated,
+    /// Math overflow — current and power data may be invalid.
+    /// Occurs when the current exceeds the configured full-scale range.
+    MathOverflow,
+    /// Energy register overflow on the specified channel.
+    /// Occurs when the accumulated energy exceeds the 40-bit register maximum.
+    EnergyOverflow(Channel),
 }
 
 impl<E: embedded_hal_async::i2c::Error> sensor::Error for Ina4230Error<E> {
     fn kind(&self) -> sensor::ErrorKind {
         match self {
             Self::Bus(_) => sensor::ErrorKind::Peripheral,
+            Self::NotCalibrated => sensor::ErrorKind::NotReady,
+            Self::MathOverflow => sensor::ErrorKind::Saturated,
+            Self::EnergyOverflow(_) => sensor::ErrorKind::Saturated,
         }
     }
 }
@@ -54,13 +60,11 @@ impl<E: embedded_hal_async::i2c::Error> sensor::Error for Ina4230Error<E> {
 pub struct DeviceInterface<I2c: embedded_hal_async::i2c::I2c> {
     /// The underlying async I²C bus.
     pub i2c: I2c,
-    /// 7-bit I²C address of this device instance (see [`INA4230_ADDR`]).
+    /// 7-bit I²C address of this device instance.
     pub address: u8,
 }
 
-impl<I2c: embedded_hal_async::i2c::I2c> device_driver::AsyncRegisterInterface
-    for DeviceInterface<I2c>
-{
+impl<I2c: embedded_hal_async::i2c::I2c> device_driver::AsyncRegisterInterface for DeviceInterface<I2c> {
     type Error = Ina4230Error<I2c::Error>;
     type AddressType = u8;
 
@@ -93,27 +97,65 @@ impl<I2c: embedded_hal_async::i2c::I2c> device_driver::AsyncRegisterInterface
     }
 }
 
+// ── Address pins ──────────────────────────────────────────────────────────────
+
+/// A0 pin logic level for I²C address selection.
+#[derive(Debug, Default, Clone, Copy, PartialEq, Eq)]
+#[cfg_attr(feature = "defmt-03", derive(defmt::Format))]
+pub enum A0 {
+    /// A0 tied to GND (default).
+    #[default]
+    Gnd,
+    /// A0 tied to VS.
+    Vs,
+}
+
+/// A1 pin logic level for I²C address selection.
+#[derive(Debug, Default, Clone, Copy, PartialEq, Eq)]
+#[cfg_attr(feature = "defmt-03", derive(defmt::Format))]
+pub enum A1 {
+    /// A1 tied to GND (default).
+    #[default]
+    Gnd,
+    /// A1 tied to VS.
+    Vs,
+}
+
+/// Compute the 7-bit I²C address from A0 and A1 pin strapping.
+pub fn i2c_address(a0: A0, a1: A1) -> u8 {
+    match (a0, a1) {
+        (A0::Gnd, A1::Gnd) => 0x40,
+        (A0::Vs, A1::Gnd) => 0x41,
+        (A0::Gnd, A1::Vs) => 0x44,
+        (A0::Vs, A1::Vs) => 0x45,
+    }
+}
+
 // ── Channel ───────────────────────────────────────────────────────────────────
 
 /// One of the four measurement channels on the INA4230.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 #[cfg_attr(feature = "defmt-03", derive(defmt::Format))]
+#[repr(usize)]
 pub enum Channel {
     /// Channel 1
-    Ch1,
+    Ch1 = 0,
     /// Channel 2
-    Ch2,
+    Ch2 = 1,
     /// Channel 3
-    Ch3,
+    Ch3 = 2,
     /// Channel 4
-    Ch4,
+    Ch4 = 3,
 }
 
+// ── ADC Range ─────────────────────────────────────────────────────────────────
+
 /// ADC full-scale input range for shunt voltage measurement.
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Default, Clone, Copy, PartialEq, Eq)]
 #[cfg_attr(feature = "defmt-03", derive(defmt::Format))]
 pub enum AdcRange {
     /// ±81.92 mV full scale, LSB = 2.5 µV (default)
+    #[default]
     Range0,
     /// ±20.48 mV full scale, LSB = 625 nV. SHUNT_CAL divided by 4.
     Range1,
@@ -136,7 +178,7 @@ pub type MilliJoules = f32;
 pub trait VoltageSensor: sensor::ErrorType {
     /// Read the bus voltage for the given channel, in millivolts (LSB = 1.6 mV).
     async fn bus_voltage(&mut self, channel: Channel) -> Result<MilliVolts, Self::Error>;
-    /// Read the shunt voltage for the given channel, in millivolts (LSB = 2.5 µV).
+    /// Read the shunt voltage for the given channel, in millivolts.
     async fn shunt_voltage(&mut self, channel: Channel) -> Result<MilliVolts, Self::Error>;
 }
 
@@ -193,22 +235,25 @@ impl<T: EnergySensor + ?Sized> EnergySensor for &mut T {
 /// High-level driver for the INA4230 quad-channel power and energy monitor.
 pub struct Ina4230<I2c: embedded_hal_async::i2c::I2c> {
     /// The generated low-level register accessor.
-    pub device: Device<DeviceInterface<I2c>>,
-    /// Stored CURRENT_LSB in A/LSB, set by `calibrate*`. Used for unit conversion.
-    current_lsb_a: f32,
-    /// ADC input range, set during calibration. Used for shunt voltage LSB selection.
-    adc_range: AdcRange,
+    device: Device<DeviceInterface<I2c>>,
+    /// CURRENT_LSB per channel in A/LSB. None means not yet calibrated.
+    current_lsb_a: [Option<f32>; 4],
+    /// ADC input range per channel.
+    adc_range: [AdcRange; 4],
 }
 
 impl<I2c: embedded_hal_async::i2c::I2c> Ina4230<I2c> {
     /// Create a new driver instance.
     ///
-    /// Pass [`INA4230_ADDR`] for the default address (A0=GND, A1=GND → 0x40).
-    pub fn new(i2c: I2c, address: u8) -> Self {
+    /// `a0` and `a1` select the I²C address via the pin strapping on the device.
+    pub fn new(i2c: I2c, a0: A0, a1: A1) -> Self {
         Self {
-            device: Device::new(DeviceInterface { i2c, address }),
-            current_lsb_a: 0.0,
-            adc_range: AdcRange::Range0,
+            device: Device::new(DeviceInterface {
+                i2c,
+                address: i2c_address(a0, a1),
+            }),
+            current_lsb_a: [None; 4],
+            adc_range: [AdcRange::Range0; 4],
         }
     }
 
@@ -231,7 +276,7 @@ impl<I2c: embedded_hal_async::i2c::I2c> Ina4230<I2c> {
     }
 
     /// Poll the Conversion Ready Flag (`FLAGS.CVRF`). Returns `true` when all
-    /// enabled channels have completed conversion and averaging. Reading FLAGS clears CVRF.
+    /// enabled channels have completed conversion and averaging.
     pub async fn conversion_ready(&mut self) -> Result<bool, Ina4230Error<I2c::Error>> {
         Ok(self.device.flags().read_async().await?.cvrf())
     }
@@ -241,6 +286,46 @@ impl<I2c: embedded_hal_async::i2c::I2c> Ina4230<I2c> {
         self.device.flags().read_async().await
     }
 
+    /// Enable or disable a channel in `CONFIG1.ACTIVE_CHANNEL`.   ← add here
+    pub async fn set_channel_active(&mut self, channel: Channel, active: bool) -> Result<(), Ina4230Error<I2c::Error>> {
+        let bit = 1u8 << (channel as usize);
+        self.device
+            .config_1()
+            .modify_async(|w| {
+                let mut active_channels = w.active_channel();
+                if active {
+                    active_channels |= bit; // set bit to enable channel
+                } else {
+                    active_channels &= !bit; // clear bit to disable channel
+                }
+                w.set_active_channel(active_channels);
+            })
+            .await
+    }
+    /// Check the FLAGS register for overflow conditions.
+    ///
+    /// Returns [`Ina4230Error::MathOverflow`] if current or power data may be
+    /// invalid, or [`Ina4230Error::EnergyOverflow`] if the energy accumulator
+    /// has overflowed on any channel. Reading FLAGS clears all flags.
+    pub async fn check_flags(&mut self) -> Result<(), Ina4230Error<I2c::Error>> {
+        let flags = self.device.flags().read_async().await?;
+        if flags.ovf() {
+            return Err(Ina4230Error::MathOverflow);
+        }
+        if flags.energyof_ch1() {
+            return Err(Ina4230Error::EnergyOverflow(Channel::Ch1));
+        }
+        if flags.energyof_ch2() {
+            return Err(Ina4230Error::EnergyOverflow(Channel::Ch2));
+        }
+        if flags.energyof_ch3() {
+            return Err(Ina4230Error::EnergyOverflow(Channel::Ch3));
+        }
+        if flags.energyof_ch4() {
+            return Err(Ina4230Error::EnergyOverflow(Channel::Ch4));
+        }
+        Ok(())
+    }
     // ── Calibration ───────────────────────────────────────────────────────
 
     /// Write the calibration register for a single channel.
@@ -258,34 +343,65 @@ impl<I2c: embedded_hal_async::i2c::I2c> Ina4230<I2c> {
         shunt_ohms: f32,
         adc_range: AdcRange,
     ) -> Result<(), Ina4230Error<I2c::Error>> {
-        self.current_lsb_a = current_lsb_a;
-        self.adc_range = adc_range;
+        let idx = channel as usize;
+        self.current_lsb_a[idx] = Some(current_lsb_a);
+        self.adc_range[idx] = adc_range;
+
+        // Update CONFIG2.RANGE bit for this channel
+        // Bit0=CH1, Bit1=CH2, Bit2=CH3, Bit3=CH4
+        let bit = 1u8 << idx;
+        self.device
+            .config_2()
+            .modify_async(|w| {
+                let mut range = w.range();
+                match adc_range {
+                    AdcRange::Range0 => range &= !bit, // clear bit → ±81.92 mV
+                    AdcRange::Range1 => range |= bit,  // set bit  → ±20.48 mV
+                }
+                w.set_range(range);
+            })
+            .await?;
+
+        // Write the calibration register
         let cal = Self::shunt_cal_value(current_lsb_a, shunt_ohms, adc_range);
         match channel {
             Channel::Ch1 => {
-                self.device.calibration_ch_1().write_async(|w| w.set_shunt_cal(cal)).await
+                self.device
+                    .calibration_ch_1()
+                    .write_async(|w| w.set_shunt_cal(cal))
+                    .await
             }
             Channel::Ch2 => {
-                self.device.calibration_ch_2().write_async(|w| w.set_shunt_cal(cal)).await
+                self.device
+                    .calibration_ch_2()
+                    .write_async(|w| w.set_shunt_cal(cal))
+                    .await
             }
             Channel::Ch3 => {
-                self.device.calibration_ch_3().write_async(|w| w.set_shunt_cal(cal)).await
+                self.device
+                    .calibration_ch_3()
+                    .write_async(|w| w.set_shunt_cal(cal))
+                    .await
             }
             Channel::Ch4 => {
-                self.device.calibration_ch_4().write_async(|w| w.set_shunt_cal(cal)).await
+                self.device
+                    .calibration_ch_4()
+                    .write_async(|w| w.set_shunt_cal(cal))
+                    .await
             }
         }
     }
 
-    /// Write the calibration register for all four channels with identical parameters.
-    pub async fn calibrate_all(
-        &mut self,
-        current_lsb_a: f32,
-        shunt_ohms: f32,
-        adc_range: AdcRange,
-    ) -> Result<(), Ina4230Error<I2c::Error>> {
-        for ch in [Channel::Ch1, Channel::Ch2, Channel::Ch3, Channel::Ch4] {
-            self.calibrate(ch, current_lsb_a, shunt_ohms, adc_range).await?;
+    /// Write the calibration register for all four channels.
+    ///
+    /// Each channel can have independent parameters. `params` is ordered
+    /// `[Ch1, Ch2, Ch3, Ch4]` as `(current_lsb_a, shunt_ohms, adc_range)`.
+    pub async fn calibrate_all(&mut self, params: [(f32, f32, AdcRange); 4]) -> Result<(), Ina4230Error<I2c::Error>> {
+        for (ch, (current_lsb_a, shunt_ohms, adc_range)) in [Channel::Ch1, Channel::Ch2, Channel::Ch3, Channel::Ch4]
+            .iter()
+            .zip(params.iter())
+        {
+            self.calibrate(*ch, *current_lsb_a, *shunt_ohms, *adc_range).await?;
         }
         Ok(())
     }
@@ -294,13 +410,14 @@ impl<I2c: embedded_hal_async::i2c::I2c> Ina4230<I2c> {
 
     #[allow(clippy::cast_possible_truncation, clippy::cast_sign_loss)]
     fn shunt_cal_value(current_lsb_a: f32, shunt_ohms: f32, adc_range: AdcRange) -> u16 {
+        const SHUNT_CAL_MAX: u32 = 0x7FFF;
         // INA4230 datasheet §8.1.2: SHUNT_CAL = 0.00512 / (CURRENT_LSB × R_SHUNT)
         let val = 0.00512_f32 / (current_lsb_a * shunt_ohms);
         let val = match adc_range {
             AdcRange::Range0 => val,
             AdcRange::Range1 => val / 4.0,
         };
-        (val as u32).min(u32::from(u16::MAX)) as u16
+        (val as u32).min(SHUNT_CAL_MAX) as u16
     }
 
     fn bus_mv(raw: u16) -> MilliVolts {
@@ -308,27 +425,30 @@ impl<I2c: embedded_hal_async::i2c::I2c> Ina4230<I2c> {
     }
 
     #[allow(clippy::cast_possible_wrap)]
-    fn shunt_mv(&self, raw: u16) -> MilliVolts {
+    fn shunt_mv(&self, channel: Channel, raw: u16) -> MilliVolts {
         let signed = raw as i16;
-        let lsb_mv = match self.adc_range {
-            AdcRange::Range0 => 0.0025,    // 2.5 µV
-            AdcRange::Range1 => 0.000625,  // 625 nV
+        let lsb_mv = match self.adc_range[channel as usize] {
+            AdcRange::Range0 => 0.0025,   // 2.5 µV
+            AdcRange::Range1 => 0.000625, // 625 nV
         };
         f32::from(signed) * lsb_mv
     }
 
     #[allow(clippy::cast_possible_wrap)]
-    fn current_ma(&self, raw: u16) -> MilliAmps {
+    fn current_ma(&self, channel: Channel, raw: u16) -> Result<MilliAmps, Ina4230Error<I2c::Error>> {
+        let lsb = self.current_lsb_a[channel as usize].ok_or(Ina4230Error::NotCalibrated)?;
         let signed = raw as i16;
-        f32::from(signed) * self.current_lsb_a * 1000.0
+        Ok(f32::from(signed) * lsb * 1000.0)
     }
 
-    fn power_mw(&self, raw: u16) -> MilliWatts {
-        f32::from(raw) * 32.0 * self.current_lsb_a * 1000.0
+    fn power_mw(&self, channel: Channel, raw: u16) -> Result<MilliWatts, Ina4230Error<I2c::Error>> {
+        let lsb = self.current_lsb_a[channel as usize].ok_or(Ina4230Error::NotCalibrated)?;
+        Ok(f32::from(raw) * 32.0 * lsb * 1000.0)
     }
 
-    fn energy_mj(&self, raw: u32) -> MilliJoules {
-        raw as f32 * 32.0 * self.current_lsb_a * 1000.0
+    fn energy_mj(&self, channel: Channel, raw: u32) -> Result<MilliJoules, Ina4230Error<I2c::Error>> {
+        let lsb = self.current_lsb_a[channel as usize].ok_or(Ina4230Error::NotCalibrated)?;
+        Ok(raw as f32 * 32.0 * lsb * 1000.0)
     }
 }
 
@@ -356,7 +476,7 @@ impl<I2c: embedded_hal_async::i2c::I2c> VoltageSensor for Ina4230<I2c> {
             Channel::Ch3 => self.device.shunt_voltage_ch_3().read_async().await?.vshunt(),
             Channel::Ch4 => self.device.shunt_voltage_ch_4().read_async().await?.vshunt(),
         };
-        Ok(self.shunt_mv(raw))
+        Ok(self.shunt_mv(channel, raw))
     }
 }
 
@@ -368,7 +488,7 @@ impl<I2c: embedded_hal_async::i2c::I2c> CurrentSensor for Ina4230<I2c> {
             Channel::Ch3 => self.device.current_ch_3().read_async().await?.current(),
             Channel::Ch4 => self.device.current_ch_4().read_async().await?.current(),
         };
-        Ok(self.current_ma(raw))
+        self.current_ma(channel, raw)
     }
 }
 
@@ -380,7 +500,7 @@ impl<I2c: embedded_hal_async::i2c::I2c> PowerSensor for Ina4230<I2c> {
             Channel::Ch3 => self.device.power_ch_3().read_async().await?.power(),
             Channel::Ch4 => self.device.power_ch_4().read_async().await?.power(),
         };
-        Ok(self.power_mw(raw))
+        self.power_mw(channel, raw)
     }
 }
 
@@ -392,7 +512,7 @@ impl<I2c: embedded_hal_async::i2c::I2c> EnergySensor for Ina4230<I2c> {
             Channel::Ch3 => self.device.energy_ch_3().read_async().await?.energy(),
             Channel::Ch4 => self.device.energy_ch_4().read_async().await?.energy(),
         };
-        Ok(self.energy_mj(raw))
+        self.energy_mj(channel, raw)
     }
 }
 
@@ -406,14 +526,17 @@ mod tests {
 
     #[tokio::test]
     async fn read_manufacturer_id() {
-        // ManufacturerId: address 0x7E, 2 bytes BE, resets to 0x5449 (TI in ASCII)
+        // ManufacturerId: address 0x7E, 2 bytes BE, resets to 0x5449 ("TI" in ASCII)
         let expectations = vec![Transaction::write_read(
-            INA4230_ADDR,
+            i2c_address(A0::Gnd, A1::Gnd),
             vec![0x7E],
             vec![0x54, 0x49],
         )];
         let i2c = Mock::new(&expectations);
-        let mut dev = Device::new(DeviceInterface { i2c, address: INA4230_ADDR });
+        let mut dev = Device::new(DeviceInterface {
+            i2c,
+            address: i2c_address(A0::Gnd, A1::Gnd),
+        });
         let id = dev.manufacturer_id().read_async().await.unwrap();
         assert_eq!(id.id(), 0x5449);
         dev.interface.i2c.done();
@@ -425,9 +548,12 @@ mod tests {
         // shunt_cal for 100µA/LSB, 10mΩ: 0.00512 / (100e-6 * 0.010) = 5120
         let cal: u16 = 5120;
         let [hi, lo] = cal.to_be_bytes();
-        let expectations = vec![Transaction::write(INA4230_ADDR, vec![0x05, hi, lo])];
+        let expectations = vec![Transaction::write(i2c_address(A0::Gnd, A1::Gnd), vec![0x05, hi, lo])];
         let i2c = Mock::new(&expectations);
-        let mut dev = Device::new(DeviceInterface { i2c, address: INA4230_ADDR });
+        let mut dev = Device::new(DeviceInterface {
+            i2c,
+            address: i2c_address(A0::Gnd, A1::Gnd),
+        });
         dev.calibration_ch_1()
             .write_async(|w| w.set_shunt_cal(cal))
             .await
@@ -442,33 +568,159 @@ mod tests {
         let raw: u16 = 5000;
         let [hi, lo] = raw.to_be_bytes();
         let expectations = vec![Transaction::write_read(
-            INA4230_ADDR,
+            i2c_address(A0::Gnd, A1::Gnd),
             vec![0x01],
             vec![hi, lo],
         )];
         let i2c = Mock::new(&expectations);
-        let mut sensor = Ina4230::new(i2c, INA4230_ADDR);
+        let mut sensor = Ina4230::new(i2c, A0::Gnd, A1::Gnd);
         let mv = sensor.bus_voltage(Channel::Ch1).await.unwrap();
         assert!((mv - 8000.0).abs() < 0.1, "expected 8000.0 mV, got {mv}");
-        sensor.device.interface.i2c.done();
+        sensor.release().done();
     }
 
     #[tokio::test]
     async fn current_ch1_trait() {
-        // current_ch_1: address 0x02, 2 bytes BE
-        // raw = 1000, CURRENT_LSB = 100µA/LSB → 1000 * 100e-6 * 1000 = 100.0 mA
+        let cal: u16 = 5120;
+        let [cal_hi, cal_lo] = cal.to_be_bytes();
+        let raw: u16 = 1000;
+        let [hi, lo] = raw.to_be_bytes();
+        let addr = i2c_address(A0::Gnd, A1::Gnd);
+        let expectations = vec![
+            // calibrate: read CONFIG2
+            Transaction::write_read(addr, vec![0x21], vec![0x00, 0x00]),
+            // calibrate: write CONFIG2 with range bit cleared
+            Transaction::write(addr, vec![0x21, 0x00, 0x00]),
+            // calibrate: write calibration_ch_1 (0x05)
+            Transaction::write(addr, vec![0x05, cal_hi, cal_lo]),
+            // current read (0x02)
+            Transaction::write_read(addr, vec![0x02], vec![hi, lo]),
+        ];
+        let i2c = Mock::new(&expectations);
+        let mut sensor = Ina4230::new(i2c, A0::Gnd, A1::Gnd);
+        sensor
+            .calibrate(Channel::Ch1, 100e-6, 0.010, AdcRange::Range0)
+            .await
+            .unwrap();
+        let ma = sensor.current(Channel::Ch1).await.unwrap();
+        assert!((ma - 100.0).abs() < 0.01, "expected 100.0 mA, got {ma}");
+        sensor.release().done();
+    }
+    #[tokio::test]
+    async fn current_returns_error_when_not_calibrated() {
+        // Attempting to read current before calibrate() should return NotCalibrated
         let raw: u16 = 1000;
         let [hi, lo] = raw.to_be_bytes();
         let expectations = vec![Transaction::write_read(
-            INA4230_ADDR,
+            i2c_address(A0::Gnd, A1::Gnd),
             vec![0x02],
             vec![hi, lo],
         )];
         let i2c = Mock::new(&expectations);
-        let mut sensor = Ina4230::new(i2c, INA4230_ADDR);
-        sensor.current_lsb_a = 100e-6;
-        let ma = sensor.current(Channel::Ch1).await.unwrap();
-        assert!((ma - 100.0).abs() < 0.01, "expected 100.0 mA, got {ma}");
-        sensor.device.interface.i2c.done();
+        let mut sensor = Ina4230::new(i2c, A0::Gnd, A1::Gnd);
+        let result = sensor.current(Channel::Ch1).await;
+        assert!(matches!(result, Err(Ina4230Error::NotCalibrated)));
+        sensor.release().done();
+    }
+
+    #[tokio::test]
+    async fn calibrate_stores_per_channel() {
+        let cal: u16 = 5120;
+        let [cal_hi, cal_lo] = cal.to_be_bytes();
+        let raw: u16 = 1000;
+        let [hi, lo] = raw.to_be_bytes();
+        let addr = i2c_address(A0::Gnd, A1::Gnd);
+        let expectations = vec![
+            // calibrate CH1: read CONFIG2
+            Transaction::write_read(addr, vec![0x21], vec![0x00, 0x00]),
+            // calibrate CH1: write CONFIG2
+            Transaction::write(addr, vec![0x21, 0x00, 0x00]),
+            // calibrate CH1: write calibration_ch_1 (0x05)
+            Transaction::write(addr, vec![0x05, cal_hi, cal_lo]),
+            // current CH2 read (0x0A)
+            Transaction::write_read(addr, vec![0x0A], vec![hi, lo]),
+        ];
+        let i2c = Mock::new(&expectations);
+        let mut sensor = Ina4230::new(i2c, A0::Gnd, A1::Gnd);
+        sensor
+            .calibrate(Channel::Ch1, 100e-6, 0.010, AdcRange::Range0)
+            .await
+            .unwrap();
+        let result = sensor.current(Channel::Ch2).await;
+        assert!(matches!(result, Err(Ina4230Error::NotCalibrated)));
+        sensor.release().done();
+    }
+
+    #[tokio::test]
+    async fn bus_voltage_all_channels() {
+        // Verify correct register addresses for all four bus voltage channels:
+        // CH1=0x01, CH2=0x09, CH3=0x11, CH4=0x19
+        let raw: u16 = 2000; // 2000 * 1.6 mV = 3200.0 mV
+        let [hi, lo] = raw.to_be_bytes();
+        let expectations = vec![
+            Transaction::write_read(i2c_address(A0::Gnd, A1::Gnd), vec![0x01], vec![hi, lo]),
+            Transaction::write_read(i2c_address(A0::Gnd, A1::Gnd), vec![0x09], vec![hi, lo]),
+            Transaction::write_read(i2c_address(A0::Gnd, A1::Gnd), vec![0x11], vec![hi, lo]),
+            Transaction::write_read(i2c_address(A0::Gnd, A1::Gnd), vec![0x19], vec![hi, lo]),
+        ];
+        let i2c = Mock::new(&expectations);
+        let mut sensor = Ina4230::new(i2c, A0::Gnd, A1::Gnd);
+        for ch in [Channel::Ch1, Channel::Ch2, Channel::Ch3, Channel::Ch4] {
+            let mv = sensor.bus_voltage(ch).await.unwrap();
+            assert!((mv - 3200.0).abs() < 0.1, "expected 3200.0 mV, got {mv}");
+        }
+        sensor.release().done();
+    }
+
+    #[tokio::test]
+    async fn calibrate_all_independent_channels() {
+        let ch1_cal: u16 = 5120;
+        let ch2_cal: u16 = 1280;
+        let ch3_cal: u16 = 20480;
+        let ch4_cal: u16 = 5120;
+        let [h1, l1] = ch1_cal.to_be_bytes();
+        let [h2, l2] = ch2_cal.to_be_bytes();
+        let [h3, l3] = ch3_cal.to_be_bytes();
+        let [h4, l4] = ch4_cal.to_be_bytes();
+        let addr = i2c_address(A0::Gnd, A1::Gnd);
+        let expectations = vec![
+            // calibrate CH1: read/write CONFIG2, write cal reg
+            Transaction::write_read(addr, vec![0x21], vec![0x00, 0x00]),
+            Transaction::write(addr, vec![0x21, 0x00, 0x00]),
+            Transaction::write(addr, vec![0x05, h1, l1]),
+            // calibrate CH2: read/write CONFIG2, write cal reg
+            Transaction::write_read(addr, vec![0x21], vec![0x00, 0x00]),
+            Transaction::write(addr, vec![0x21, 0x00, 0x00]),
+            Transaction::write(addr, vec![0x0D, h2, l2]),
+            // calibrate CH3: read/write CONFIG2, write cal reg
+            Transaction::write_read(addr, vec![0x21], vec![0x00, 0x00]),
+            Transaction::write(addr, vec![0x21, 0x00, 0x00]),
+            Transaction::write(addr, vec![0x15, h3, l3]),
+            // calibrate CH4: read/write CONFIG2, write cal reg
+            Transaction::write_read(addr, vec![0x21], vec![0x00, 0x00]),
+            Transaction::write(addr, vec![0x21, 0x00, 0x00]),
+            Transaction::write(addr, vec![0x1D, h4, l4]),
+        ];
+        let i2c = Mock::new(&expectations);
+        let mut sensor = Ina4230::new(i2c, A0::Gnd, A1::Gnd);
+        sensor
+            .calibrate_all([
+                (100e-6, 0.010, AdcRange::Range0),
+                (200e-6, 0.020, AdcRange::Range0),
+                (50e-6, 0.005, AdcRange::Range0),
+                (100e-6, 0.010, AdcRange::Range0),
+            ])
+            .await
+            .unwrap();
+        sensor.release().done();
+    }
+
+    #[tokio::test]
+    async fn i2c_address_all_combinations() {
+        // Verify all four address pin combinations produce correct I²C addresses
+        assert_eq!(i2c_address(A0::Gnd, A1::Gnd), 0x40);
+        assert_eq!(i2c_address(A0::Vs, A1::Gnd), 0x41);
+        assert_eq!(i2c_address(A0::Gnd, A1::Vs), 0x44);
+        assert_eq!(i2c_address(A0::Vs, A1::Vs), 0x45);
     }
 }

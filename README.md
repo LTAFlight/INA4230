@@ -11,8 +11,10 @@ async sensor traits (`VoltageSensor`, `CurrentSensor`, `PowerSensor`, `EnergySen
 - Full register coverage via pre-generated `src/device.rs` (generated from `INA4230.toml` using `device-driver-cli`)
 - Async-first I²C interface (`embedded-hal-async`)
 - Four independent measurement channels (bus voltage, shunt voltage, current, power, energy)
-- Calibration helpers with correct SHUNT_CAL formula
-- ADC range selection (±81.92 mV or ±20.48 mV full scale)
+- Per-channel calibration with independent shunt resistor, current range, and ADC range
+- ADC range selection (±81.92 mV or ±20.48 mV full scale) written to hardware on calibration
+- Channel enable/disable support
+- INA4230-specific error variants (`NotCalibrated`, `MathOverflow`, `EnergyOverflow`)
 - Optional `defmt-03` logging support
 - `no_std` compatible
 
@@ -25,12 +27,13 @@ embedded-hal-async = "1"
 ```
 
 ```rust,no_run
-use ina4230::{AdcRange, Channel, CurrentSensor, Ina4230, INA4230_ADDR, PowerSensor, VoltageSensor};
+use ina4230::{A0, A1, AdcRange, Channel, Ina4230};
 
 // i2c implements embedded_hal_async::i2c::I2c
-let mut sensor = Ina4230::new(i2c, INA4230_ADDR);
+// A0 and A1 select the I²C address via pin strapping on the device
+let mut sensor = Ina4230::new(i2c, A0::Gnd, A1::Gnd);
 
-// Reset, then calibrate before taking measurements
+// Reset, then calibrate each channel before taking measurements
 sensor.reset().await?;
 sensor.calibrate(Channel::Ch1, CURRENT_LSB_CH1, SHUNT_OHMS_CH1, AdcRange::Range0).await?;
 
@@ -105,7 +108,8 @@ The INA4230 supports two shunt input voltage ranges, configured via `AdcRange`:
 resolution when measuring small currents through a large shunt resistor.
 
 When using `Range1`, the `SHUNT_CAL` register value is automatically divided
-by 4 and the shunt voltage LSB is adjusted to 625 nV:
+by 4, the shunt voltage LSB is adjusted to 625 nV, and `CONFIG2.RANGE` is
+updated in hardware:
 
 ```
 Range0: SHUNT_CAL = 0.00512 / (CURRENT_LSB × R_SHUNT)
@@ -119,17 +123,75 @@ the shunt resistor value used to calculate current from the measured
 differential voltage, and it sets the resolution of the current and power
 registers through the `CURRENT_LSB` and `Power_LSB` values.
 
-Call `calibrate()` before taking current, power, or energy measurements:
+Call `calibrate()` before taking current, power, or energy measurements.
+Each channel is calibrated independently:
 
 ```rust,no_run
 sensor.calibrate(Channel::Ch1, CURRENT_LSB_CH1, SHUNT_OHMS_CH1, AdcRange::Range0).await?;
+sensor.calibrate(Channel::Ch2, CURRENT_LSB_CH2, SHUNT_OHMS_CH2, AdcRange::Range0).await?;
+sensor.calibrate(Channel::Ch3, CURRENT_LSB_CH3, SHUNT_OHMS_CH3, AdcRange::Range1).await?;
+sensor.calibrate(Channel::Ch4, CURRENT_LSB_CH4, SHUNT_OHMS_CH4, AdcRange::Range0).await?;
+```
+
+Or use `calibrate_all()` to configure all four channels in one call:
+
+```rust,no_run
+sensor.calibrate_all([
+    (CURRENT_LSB_CH1, SHUNT_OHMS_CH1, AdcRange::Range0),
+    (CURRENT_LSB_CH2, SHUNT_OHMS_CH2, AdcRange::Range0),
+    (CURRENT_LSB_CH3, SHUNT_OHMS_CH3, AdcRange::Range1),
+    (CURRENT_LSB_CH4, SHUNT_OHMS_CH4, AdcRange::Range0),
+]).await?;
 ```
 
 The calibration register must be programmed after initial power up, power
 cycle events, or device enable to receive valid current, power, and energy
 results. Bus voltage and shunt voltage readings do not require calibration.
 
+### Channel Management
+
+All four channels are active by default after power up. Unused channels can
+be disabled to reduce conversion time:
+
+```rust,no_run
+sensor.set_channel_active(Channel::Ch3, false).await?;
+sensor.set_channel_active(Channel::Ch4, false).await?;
+```
+
+## Error Handling
+
+The driver returns `Ina4230Error` which covers both I²C bus errors and
+device-level conditions:
+
+```rust,no_run
+match sensor.current(Channel::Ch1).await {
+    Ok(ma) => info!("Current: {} mA", ma),
+    Err(Ina4230Error::NotCalibrated) => error!("Call calibrate() first"),
+    Err(Ina4230Error::MathOverflow) => error!("Current exceeds full-scale range"),
+    Err(Ina4230Error::EnergyOverflow(ch)) => error!("Energy overflow on {:?}", ch),
+    Err(Ina4230Error::Bus(e)) => error!("I²C error: {:?}", e),
+}
+```
+
+Use `check_flags()` to explicitly poll for overflow conditions:
+
+```rust,no_run
+if let Err(e) = sensor.check_flags().await {
+    warn!("INA4230 flag: {:?}", e);
+}
+```
+
 ## I²C Addresses
+
+The I²C address is selected by the A0 and A1 pin strapping on the device.
+Pass `A0` and `A1` values to `Ina4230::new()`:
+
+```rust,no_run
+let sensor = Ina4230::new(i2c, A0::Gnd, A1::Gnd);  // address 0x40
+let sensor = Ina4230::new(i2c, A0::Vs,  A1::Gnd);  // address 0x41
+let sensor = Ina4230::new(i2c, A0::Gnd, A1::Vs);   // address 0x44
+let sensor = Ina4230::new(i2c, A0::Vs,  A1::Vs);   // address 0x45
+```
 
 | A1  | A0  | Address |
 |-----|-----|---------|

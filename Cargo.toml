@@ -8,8 +8,9 @@ readme = "README.md"
 keywords = ["TI", "power-monitor", "energy", "driver", "embedded-hal-driver"]
 categories = ["embedded", "hardware-support", "no-std"]
 documentation = "https://docs.rs/ina4230"
-include = ["/**/*.rs", "/Cargo.toml", "/README.md", "/LICENSE", "/ina4230.toml"]
+include = ["/**/*.rs", "/Cargo.toml", "/README.md", "/LICENSE", "/INA4230.toml"]
 edition = "2024"
+rust-version = "1.88"
 
 [dependencies]
 device-driver = { version = "1.0.7", default-features = false }
