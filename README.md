@@ -26,7 +26,7 @@ ina4230 = "0.1.0"
 embedded-hal-async = "1"
 ```
 
-```rust,no_run
+```rust,ignore
 use ina4230::{AddrPinState, AdcRange, Channel, Ina4230};
 
 // i2c implements embedded_hal_async::i2c::I2c
@@ -54,7 +54,7 @@ Before taking measurements, two hardware-specific parameters must be set per cha
 
 Set `SHUNT_OHMS_CHx` to the resistance of the shunt resistor fitted on that channel, in ohms:
 
-```rust,no_run
+```rust
 const SHUNT_OHMS_CH1: f32 = 0.010;  // 10 mΩ shunt on channel 1
 ```
 
@@ -72,7 +72,7 @@ giving 32767 steps above zero.
 Set `MAX_CURRENT_CHx` to the maximum current you expect on that channel — the
 driver calculates the optimal `CURRENT_LSB` automatically:
 
-```rust,no_run
+```rust
 // Example: expecting up to 100 mA on channel 1
 const MAX_CURRENT_CH1: f32 = 0.1;            // amps
 const CURRENT_LSB_CH1: f32 = MAX_CURRENT_CH1 / 32767.0;  // ~3.05 µA/LSB
@@ -81,13 +81,13 @@ const CURRENT_LSB_CH1: f32 = MAX_CURRENT_CH1 / 32767.0;  // ~3.05 µA/LSB
 The driver uses `CURRENT_LSB` to compute the `SHUNT_CAL` register value
 written during `calibrate()`:
 
-```
+```text
 SHUNT_CAL = 0.00512 / (CURRENT_LSB × R_SHUNT)
 ```
 
 And to convert the raw current register reading back to milliamperes:
 
-```
+```text
 Current [mA] = raw × CURRENT_LSB × 1000
 ```
 
@@ -111,7 +111,7 @@ When using `Range1`, the `SHUNT_CAL` register value is automatically divided
 by 4, the shunt voltage LSB is adjusted to 625 nV, and `CONFIG2.RANGE` is
 updated in hardware:
 
-```
+```text
 Range0: SHUNT_CAL = 0.00512 / (CURRENT_LSB × R_SHUNT)
 Range1: SHUNT_CAL = 0.00512 / (CURRENT_LSB × R_SHUNT) / 4
 ```
@@ -126,7 +126,7 @@ registers through the `CURRENT_LSB` and `Power_LSB` values.
 Call `calibrate()` before taking current, power, or energy measurements.
 Each channel is calibrated independently:
 
-```rust,no_run
+```rust,ignore
 sensor.calibrate(Channel::Ch1, CURRENT_LSB_CH1, SHUNT_OHMS_CH1, AdcRange::Range0).await?;
 sensor.calibrate(Channel::Ch2, CURRENT_LSB_CH2, SHUNT_OHMS_CH2, AdcRange::Range0).await?;
 sensor.calibrate(Channel::Ch3, CURRENT_LSB_CH3, SHUNT_OHMS_CH3, AdcRange::Range1).await?;
@@ -135,7 +135,7 @@ sensor.calibrate(Channel::Ch4, CURRENT_LSB_CH4, SHUNT_OHMS_CH4, AdcRange::Range0
 
 Or use `calibrate_all()` to configure all four channels in one call:
 
-```rust,no_run
+```rust,ignore
 sensor.calibrate_all([
     (CURRENT_LSB_CH1, SHUNT_OHMS_CH1, AdcRange::Range0),
     (CURRENT_LSB_CH2, SHUNT_OHMS_CH2, AdcRange::Range0),
@@ -153,7 +153,7 @@ results. Bus voltage and shunt voltage readings do not require calibration.
 All four channels are active by default after power up. Unused channels can
 be disabled to reduce conversion time:
 
-```rust,no_run
+```rust,ignore
 sensor.set_channel_active(Channel::Ch3, false).await?;
 sensor.set_channel_active(Channel::Ch4, false).await?;
 ```
@@ -163,7 +163,7 @@ sensor.set_channel_active(Channel::Ch4, false).await?;
 The driver returns `Ina4230Error` which covers both I²C bus errors and
 device-level conditions:
 
-```rust,no_run
+```rust,ignore
 match sensor.current(Channel::Ch1).await {
     Ok(ma) => info!("Current: {} mA", ma),
     Err(Ina4230Error::NotCalibrated) => error!("Call calibrate() first"),
@@ -175,7 +175,7 @@ match sensor.current(Channel::Ch1).await {
 
 Use `check_flags()` to explicitly poll for overflow conditions:
 
-```rust,no_run
+```rust,ignore
 if let Err(e) = sensor.check_flags().await {
     warn!("INA4230 flag: {:?}", e);
 }
@@ -187,7 +187,7 @@ The I²C address is selected by the A0 and A1 pin strapping on the device.
 Pass two `AddrPinState` values to `Ina4230::new()` — the first for A0, the
 second for A1:
 
-```rust,no_run
+```rust,ignore
 // A0=GND, A1=GND → address 0x40
 let sensor = Ina4230::new(i2c, AddrPinState::Gnd, AddrPinState::Gnd);
 

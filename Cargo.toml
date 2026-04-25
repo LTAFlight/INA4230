@@ -20,10 +20,9 @@ embedded-sensors-hal-async = "0.4.0"
 
 [dev-dependencies]
 embedded-hal-mock = { version = "0.11.1", features = ["embedded-hal-async"] }
-tokio = { version = "1", features = ["rt", "macros"] }
+tokio = { version = "=1.45.0", features = ["rt", "macros"] }
 
-[lib]
-doctest = false
+
 
 [lints.rust]
 unsafe_code = "deny"
