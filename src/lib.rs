@@ -19,7 +19,6 @@ use embedded_sensors_hal_async::sensor;
 #[allow(unsafe_code)]
 #[allow(missing_docs)]
 mod device;
-
 pub use crate::device::*;
 
 /// Maximum register data size in bytes (energy registers are 32-bit = 4 bytes).
@@ -48,8 +47,7 @@ impl<E: embedded_hal_async::i2c::Error> sensor::Error for Ina4230Error<E> {
         match self {
             Self::Bus(_) => sensor::ErrorKind::Peripheral,
             Self::NotCalibrated => sensor::ErrorKind::NotReady,
-            Self::MathOverflow => sensor::ErrorKind::Saturated,
-            Self::EnergyOverflow(_) => sensor::ErrorKind::Saturated,
+            Self::MathOverflow | Self::EnergyOverflow(_) => sensor::ErrorKind::Saturated,
         }
     }
 }
@@ -98,6 +96,7 @@ impl<I2c: embedded_hal_async::i2c::I2c> device_driver::AsyncRegisterInterface fo
 }
 
 // ── Address pins ──────────────────────────────────────────────────────────────
+
 /// Logic level of an I²C address pin (A0 or A1) for device address selection.
 #[derive(Debug, Default, Clone, Copy, PartialEq, Eq)]
 #[cfg_attr(feature = "defmt", derive(defmt::Format))]
@@ -114,7 +113,7 @@ pub enum AddrPinState {
 }
 
 /// Trait for converting an (A0, A1) pair of address pin states into
-/// the corresponding I2C address.
+/// the corresponding I²C address.
 pub trait ToAddress {
     /// Convert pin strapping to a 7-bit I²C address.
     fn to_address(self) -> u8;
@@ -180,7 +179,7 @@ pub enum AdcRange {
     /// ±81.92 mV full scale, LSB = 2.5 µV (default)
     #[default]
     Range0,
-    /// ±20.48 mV full scale, LSB = 625 nV. SHUNT_CAL divided by 4.
+    /// ±20.48 mV full scale, LSB = 625 nV. `SHUNT_CAL` divided by 4.
     Range1,
 }
 
@@ -259,7 +258,7 @@ impl<T: EnergySensor + ?Sized> EnergySensor for &mut T {
 pub struct Ina4230<I2c: embedded_hal_async::i2c::I2c> {
     /// The generated low-level register accessor.
     device: Device<DeviceInterface<I2c>>,
-    /// CURRENT_LSB per channel in A/LSB. None means not yet calibrated.
+    /// `CURRENT_LSB` per channel in A/LSB. None means not yet calibrated.
     current_lsb_a: [Option<f32>; 4],
     /// ADC input range per channel.
     adc_range: [AdcRange; 4],
@@ -289,27 +288,47 @@ impl<I2c: embedded_hal_async::i2c::I2c> Ina4230<I2c> {
 
     /// Issue a full device reset (`CONFIG2.RST = 1`). All registers return to
     /// power-on defaults. The bit self-clears.
+    ///
+    /// # Errors
+    ///
+    /// Returns [`Ina4230Error::Bus`] if an I²C bus error occurs.
     pub async fn reset(&mut self) -> Result<(), Ina4230Error<I2c::Error>> {
         self.device.config_2().write_async(|w| w.set_rst(true)).await
     }
 
     /// Read the manufacturer ID register. Returns `0x5449` ("TI") on a healthy device.
+    ///
+    /// # Errors
+    ///
+    /// Returns [`Ina4230Error::Bus`] if an I²C bus error occurs.
     pub async fn manufacturer_id(&mut self) -> Result<u16, Ina4230Error<I2c::Error>> {
         Ok(self.device.manufacturer_id().read_async().await?.id())
     }
 
     /// Poll the Conversion Ready Flag (`FLAGS.CVRF`). Returns `true` when all
     /// enabled channels have completed conversion and averaging.
+    ///
+    /// # Errors
+    ///
+    /// Returns [`Ina4230Error::Bus`] if an I²C bus error occurs.
     pub async fn conversion_ready(&mut self) -> Result<bool, Ina4230Error<I2c::Error>> {
         Ok(self.device.flags().read_async().await?.cvrf())
     }
 
     /// Read the full flags register in one call.
+    ///
+    /// # Errors
+    ///
+    /// Returns [`Ina4230Error::Bus`] if an I²C bus error occurs.
     pub async fn flags(&mut self) -> Result<field_sets::Flags, Ina4230Error<I2c::Error>> {
         self.device.flags().read_async().await
     }
 
-    /// Enable or disable a channel in `CONFIG1.ACTIVE_CHANNEL`.   ← add here
+    /// Enable or disable a channel in `CONFIG1.ACTIVE_CHANNEL`.
+    ///
+    /// # Errors
+    ///
+    /// Returns [`Ina4230Error::Bus`] if an I²C bus error occurs.
     pub async fn set_channel_active(&mut self, channel: Channel, active: bool) -> Result<(), Ina4230Error<I2c::Error>> {
         let bit = channel.to_bit();
         self.device
@@ -317,19 +336,26 @@ impl<I2c: embedded_hal_async::i2c::I2c> Ina4230<I2c> {
             .modify_async(|w| {
                 let mut active_channels = w.active_channel();
                 if active {
-                    active_channels |= bit; // set bit to enable channel
+                    active_channels |= bit;
                 } else {
-                    active_channels &= !bit; // clear bit to disable channel
+                    active_channels &= !bit;
                 }
                 w.set_active_channel(active_channels);
             })
             .await
     }
+
     /// Check the FLAGS register for overflow conditions.
     ///
     /// Returns [`Ina4230Error::MathOverflow`] if current or power data may be
     /// invalid, or [`Ina4230Error::EnergyOverflow`] if the energy accumulator
     /// has overflowed on any channel. Reading FLAGS clears all flags.
+    ///
+    /// # Errors
+    ///
+    /// Returns [`Ina4230Error::Bus`] if an I²C bus error occurs.
+    /// Returns [`Ina4230Error::MathOverflow`] if the math overflow flag is set.
+    /// Returns [`Ina4230Error::EnergyOverflow`] if an energy overflow flag is set.
     pub async fn check_flags(&mut self) -> Result<(), Ina4230Error<I2c::Error>> {
         let flags = self.device.flags().read_async().await?;
         if flags.ovf() {
@@ -346,6 +372,7 @@ impl<I2c: embedded_hal_async::i2c::I2c> Ina4230<I2c> {
             Ok(())
         }
     }
+
     // ── Calibration ───────────────────────────────────────────────────────
 
     /// Write the calibration register for a single channel.
@@ -356,6 +383,10 @@ impl<I2c: embedded_hal_async::i2c::I2c> Ina4230<I2c> {
     ///
     /// Formula (ADCRANGE = 0): `SHUNT_CAL = 0.00512 / (CURRENT_LSB × R_SHUNT)`
     /// Formula (ADCRANGE = 1): `SHUNT_CAL = 0.00512 / (CURRENT_LSB × R_SHUNT) / 4`
+    ///
+    /// # Errors
+    ///
+    /// Returns [`Ina4230Error::Bus`] if an I²C bus error occurs.
     pub async fn calibrate(
         &mut self,
         channel: Channel,
@@ -375,8 +406,8 @@ impl<I2c: embedded_hal_async::i2c::I2c> Ina4230<I2c> {
             .modify_async(|w| {
                 let mut range = w.range();
                 match adc_range {
-                    AdcRange::Range0 => range &= !bit, // clear bit → ±81.92 mV
-                    AdcRange::Range1 => range |= bit,  // set bit  → ±20.48 mV
+                    AdcRange::Range0 => range &= !bit,
+                    AdcRange::Range1 => range |= bit,
                 }
                 w.set_range(range);
             })
@@ -416,6 +447,10 @@ impl<I2c: embedded_hal_async::i2c::I2c> Ina4230<I2c> {
     ///
     /// Each channel can have independent parameters. `params` is ordered
     /// `[Ch1, Ch2, Ch3, Ch4]` as `(current_lsb_a, shunt_ohms, adc_range)`.
+    ///
+    /// # Errors
+    ///
+    /// Returns [`Ina4230Error::Bus`] if an I²C bus error occurs.
     pub async fn calibrate_all(&mut self, params: [(f32, f32, AdcRange); 4]) -> Result<(), Ina4230Error<I2c::Error>> {
         for (ch, (current_lsb_a, shunt_ohms, adc_range)) in [Channel::Ch1, Channel::Ch2, Channel::Ch3, Channel::Ch4]
             .iter()
@@ -448,8 +483,8 @@ impl<I2c: embedded_hal_async::i2c::I2c> Ina4230<I2c> {
     fn shunt_mv(&self, channel: Channel, raw: u16) -> MilliVolts {
         let signed = raw as i16;
         let lsb_mv = match self.adc_range[channel as usize] {
-            AdcRange::Range0 => 0.0025,   // 2.5 µV
-            AdcRange::Range1 => 0.000625, // 625 nV
+            AdcRange::Range0 => 0.0025,    // 2.5 µV
+            AdcRange::Range1 => 0.000_625, // 625 nV
         };
         f32::from(signed) * lsb_mv
     }
@@ -468,6 +503,7 @@ impl<I2c: embedded_hal_async::i2c::I2c> Ina4230<I2c> {
 
     fn energy_mj(&self, channel: Channel, raw: u32) -> Result<MilliJoules, Ina4230Error<I2c::Error>> {
         let lsb = self.current_lsb_a[channel as usize].ok_or(Ina4230Error::NotCalibrated)?;
+        #[allow(clippy::cast_precision_loss)]
         Ok(raw as f32 * 32.0 * lsb * 1000.0)
     }
 }
@@ -629,6 +665,7 @@ mod tests {
         assert!((ma - 100.0).abs() < 0.01, "expected 100.0 mA, got {ma}");
         sensor.release().done();
     }
+
     #[tokio::test]
     async fn current_returns_error_when_not_calibrated() {
         // Attempting to read current before calibrate() should return NotCalibrated
