@@ -60,7 +60,7 @@ end = "2027-03-13"
 
 [[trusted.bitflags]]
 criteria = "safe-to-deploy"
-user-id = 3204 # Ashley Mannix (KodrAus)
+user-id = 3204
 start = "2019-05-02"
 end = "2027-03-13"
 
@@ -174,19 +174,19 @@ end = "2027-03-13"
 
 [[trusted.winnow]]
 criteria = "safe-to-deploy"
-user-id = 6743 # Ed Page (epage)
+user-id = 6743
 start = "2023-02-22"
 end = "2027-03-13"
 
 [[trusted.zerocopy]]
 criteria = "safe-to-deploy"
-user-id = 7178 # Joshua Liebow-Feeser (joshlf)
+user-id = 7178
 start = "2019-02-28"
 end = "2027-03-13"
 
 [[trusted.zerocopy-derive]]
 criteria = "safe-to-deploy"
-user-id = 7178 # Joshua Liebow-Feeser (joshlf)
+user-id = 7178
 start = "2019-02-28"
 end = "2027-03-13"
 

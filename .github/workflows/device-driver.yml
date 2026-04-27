@@ -22,7 +22,7 @@ jobs:
         with:
           crate: device-driver-cli
       - name: Generate device.rs from INA4230.toml
-        run: device-driver-cli --manifest ina4230.toml --device-name Device -o ci_gen.rs
+        run: device-driver-cli --manifest INA4230.toml --device-name Device -o ci_gen.rs
       - name: Format generated file
         run: rustfmt --edition 2024 ci_gen.rs
       - name: Check generated file matches committed src/device.rs
